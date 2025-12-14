@@ -21,11 +21,11 @@ class LoginClass {
         }
 
         // 🔹 Comparar contraseña con hash
-        if (!password_verify($contraseña, $usuario["contraseña"])) {
+       if (!password_verify($contraseña, $usuario["password"])) {
             return ["error" => "Contraseña incorrecta"];
         }
 
-        unset($usuario["contraseña"]); // Nunca devolver la contraseña
+        unset($usuario["password"]); // Nunca devolver la contraseña
 
         return [
             "success" => true,

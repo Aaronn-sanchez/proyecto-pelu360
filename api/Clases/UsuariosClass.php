@@ -27,7 +27,7 @@ class UsuariosClass {
     // Crear usuario
     public function crearUsuario($data) {
 
-        $campos = ["nombre", "apellido", "usuario_login", "contraseña", "rol"];
+      $campos = ["nombre", "apellido", "usuario_login", "password", "rol"];
 
         foreach ($campos as $campo) {
             if (!isset($data[$campo])) {
@@ -35,19 +35,19 @@ class UsuariosClass {
             }
         }
 
-        $sql = "INSERT INTO usuarios (nombre, apellido, usuario_login, contraseña, rol)
-                VALUES (?, ?, ?, ?, ?)";
+       $sql = "INSERT INTO usuarios (nombre, apellido, usuario_login, password, rol)
+        VALUES (?, ?, ?, ?, ?)";
 
-        $query = $this->pdo->prepare($sql);
+$query = $this->pdo->prepare($sql);
 
-        try {
-            $query->execute([
-                $data["nombre"],
-                $data["apellido"],
-                $data["usuario_login"],
-                password_hash($data["contraseña"], PASSWORD_DEFAULT),
-                $data["rol"]
-            ]);
+try {
+    $query->execute([
+        $data["nombre"],
+        $data["apellido"],
+        $data["usuario_login"],
+        password_hash($data["password"], PASSWORD_DEFAULT),
+        $data["rol"]
+    ]);
 
             return ["success" => "Usuario creado correctamente"];
         } catch (PDOException $e) {
@@ -58,17 +58,17 @@ class UsuariosClass {
 
     // Actualizar usuario
 
-    public function actualizarUsuario($id, $data) {
-    if (!empty($data["contraseña"])) {
+   public function actualizarUsuario($id, $data) {
+    if (!empty($data["password"])) {
         $sql = "UPDATE usuarios 
-                SET nombre = ?, apellido = ?, usuario_login = ?, rol = ?, contraseña = ?
+                SET nombre = ?, apellido = ?, usuario_login = ?, rol = ?, password = ?
                 WHERE id_usuario = ?";
         $params = [
             $data["nombre"],
             $data["apellido"],
             $data["usuario_login"],
             $data["rol"],
-            password_hash($data["contraseña"], PASSWORD_DEFAULT),
+            password_hash($data["password"], PASSWORD_DEFAULT),
             $id
         ];
     } else {

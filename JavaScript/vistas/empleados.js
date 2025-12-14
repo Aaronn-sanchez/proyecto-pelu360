@@ -185,7 +185,7 @@ const Empleados = {
 
     // Solo añadimos la contraseña si se ingresó
     if (password) {
-        empleadoActualizado.contraseña = password;
+        empleadoActualizado.password = password;
     }
 
     const respuesta = await ApiServicios.modificarEmpleado(id, empleadoActualizado);
@@ -199,32 +199,6 @@ const Empleados = {
     }
 },
 
-
-    // async guardarCambios() {
-    //     const id = document.getElementById("editIdEmpleado").value;
-    //     const nombre = document.getElementById("editNombre").value.trim();
-    //     const apellido = document.getElementById("editApellido").value.trim();
-    //     const usuario_login = document.getElementById("editUsuario").value.trim();
-    //     const rol = document.getElementById("editRol").value;
-
-    //     if (!nombre || !apellido || !usuario_login) {
-    //         Utilidades.mostrarNotificacion("⚠️ Todos los campos son obligatorios", "error");
-    //         return;
-    //     }
-
-    //     const empleadoActualizado = { nombre, apellido, usuario_login, rol };
-        
-
-    //     const respuesta = await ApiServicios.modificarEmpleado(id, empleadoActualizado);
-
-    //     if (respuesta && !respuesta.error) {
-    //         await ApiServicios.obtenerEmpleados();
-    //         this.renderTabla();
-    //         Utilidades.mostrarNotificacion("✅ Empleado actualizado correctamente");
-    //     } else {
-    //         Utilidades.mostrarNotificacion("❌ Error al actualizar el empleado", "error");
-    //     }
-    // },
 
     async eliminar(index) {
         // Verificar permisos
@@ -337,7 +311,7 @@ const Empleados = {
             return;
         }
 
-        const nuevoEmpleado = { nombre, apellido, usuario_login, contraseña, rol };
+        const nuevoEmpleado = { nombre, apellido, usuario_login, password: contraseña, rol };
 
         try {
             const respuesta = await ApiServicios.agregarEmpleado(nuevoEmpleado);

@@ -29,39 +29,32 @@ class Usuarios {
     // POST → Crear usuario
     // -------------------------
     public function post() {
-    $data = json_decode(file_get_contents("php://input"), true);
+        $data = json_decode(file_get_contents("php://input"), true);
 
-    if (!$data) {
-        echo json_encode(["success" => false, "error" => "Datos inválidos"]);
-        return;
+        if (!$data) {
+            echo json_encode(["error" => "Datos inválidos"]);
+            return;
+        }
+
+        try {
+            $query = "INSERT INTO usuarios (nombre, apellido, usuario_login, password, rol)
+          VALUES (:nombre, :apellido, :usuario_login, :password, :rol)";
+
+$stmt = $this->pdo->prepare($query);
+$stmt->execute([
+    ":nombre"       => $data["nombre"],
+    ":apellido"     => $data["apellido"],
+    ":usuario_login"=> $data["usuario_login"],
+    ":password"     => password_hash($data["password"], PASSWORD_DEFAULT),
+    ":rol"          => $data["rol"]
+]);
+
+            echo json_encode(["mensaje" => "Usuario creado correctamente"]);
+
+        } catch (PDOException $e) {
+            echo json_encode(["error" => $e->getMessage()]);
+        }
     }
-
-    try {
-        $query = "INSERT INTO usuarios (nombre, apellido, usuario_login, contraseña, rol)
-                  VALUES (:nombre, :apellido, :usuario_login, :contraseña, :rol)";
-        $stmt = $this->pdo->prepare($query);
-
-        $stmt->execute([
-            ":nombre" => $data["nombre"],
-            ":apellido" => $data["apellido"],
-            ":usuario_login"=> $data["usuario_login"],
-            ":contraseña" => password_hash($data["contraseña"], PASSWORD_DEFAULT),
-            ":rol" => $data["rol"]
-        ]);
-
-        echo json_encode([
-            "success" => true,
-            "mensaje" => "Usuario creado correctamente"
-        ]);
-
-    } catch (PDOException $e) {
-        echo json_encode([
-            "success" => false,
-            "error" => $e->getMessage()
-        ]);
-    }
-}
-
 
     // -------------------------
     // PUT → Actualizar usuario
@@ -84,8 +77,7 @@ public function put() {
         $stmtCheck->execute([":id" => $data["id_usuario"]]);
         $usuarioActual = $stmtCheck->fetch(PDO::FETCH_ASSOC);
 
-        // NUEVA VALIDACIÓN: Solo bloquear si intenta modificarse a SÍ MISMO
-        // Necesitas enviar el id_usuario_logueado desde el frontend
+        // VALIDACIÓN: Solo bloquear si intenta modificarse a SÍ MISMO
         if (isset($data['id_usuario_logueado']) && 
             $data['id_usuario_logueado'] == $data['id_usuario'] && 
             $usuarioActual['rol'] === 'administrador' && 
@@ -97,24 +89,45 @@ public function put() {
             return;
         }
 
-        // Actualizar usuario (ahora SÍ puede cambiar el rol de otros)
-        $query = "UPDATE usuarios 
-                  SET nombre = :nombre,
-                      apellido = :apellido,
-                      usuario_login = :usuario_login,
-                      rol = :rol
-                  WHERE id_usuario = :id";
+        // Si hay contraseña nueva, actualizar con ella
+        if (!empty($data["password"])) {
+            $query = "UPDATE usuarios 
+                      SET nombre = :nombre,
+                          apellido = :apellido,
+                          usuario_login = :usuario_login,
+                          rol = :rol,
+                          password = :password
+                      WHERE id_usuario = :id";
 
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute([
-            ":nombre"       => $data["nombre"],
-            ":apellido"     => $data["apellido"],
-            ":usuario_login"=> $data["usuario_login"],
-            ":rol"          => $data["rol"],
-            ":id"           => $data["id_usuario"]
-        ]);
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute([
+                ":nombre"       => $data["nombre"],
+                ":apellido"     => $data["apellido"],
+                ":usuario_login"=> $data["usuario_login"],
+                ":rol"          => $data["rol"],
+                ":password"     => password_hash($data["password"], PASSWORD_DEFAULT),
+                ":id"           => $data["id_usuario"]
+            ]);
+        } else {
+            // Sin contraseña nueva
+            $query = "UPDATE usuarios 
+                      SET nombre = :nombre,
+                          apellido = :apellido,
+                          usuario_login = :usuario_login,
+                          rol = :rol
+                      WHERE id_usuario = :id";
 
-        echo json_encode(["mensaje" => "Usuario actualizado"]);
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute([
+                ":nombre"       => $data["nombre"],
+                ":apellido"     => $data["apellido"],
+                ":usuario_login"=> $data["usuario_login"],
+                ":rol"          => $data["rol"],
+                ":id"           => $data["id_usuario"]
+            ]);
+        }
+
+        echo json_encode(["success" => true, "mensaje" => "Usuario actualizado"]);
 
     } catch (PDOException $e) {
         echo json_encode(["error" => $e->getMessage()]);

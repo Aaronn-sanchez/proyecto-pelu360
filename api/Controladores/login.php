@@ -31,12 +31,13 @@ class Login {
         }
 
         // ✅ Verificar contraseña con password_verify
-        if (!password_verify($data["pass"], $usuario["contraseña"])) {
+      if (!password_verify($data["pass"], $usuario["password"])) {
+
             echo json_encode(["error" => "Contraseña incorrecta"]);
             return;
         }
 
-        unset($usuario["contraseña"]); // Nunca enviar contraseña
+       unset($usuario["password"]); // Nunca enviar contraseña
         echo json_encode([
             "success" => true,
             "usuario" => $usuario

@@ -16,8 +16,7 @@ const Config = {
         ],
         turnos: [
             {id: "ver", icon: "fa-calendar-check", text: "Ver Turnos", roles: ["administrador", "empleado"]},
-            {id: "agregar", icon: "fa-plus-circle", text: "Agregar Turno", roles: ["administrador", "empleado"]},
-            {id: "buscar", icon: "fa-search", text: "Buscar Turno", roles: ["administrador"]}
+            {id: "agregar", icon: "fa-plus-circle", text: "Agregar Turno", roles: ["administrador", "empleado"]}
         ],
         empleados: [
             {id: "ver", icon: "fa-users", text: "Ver Empleados", roles: ["administrador"]},
