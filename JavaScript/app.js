@@ -1,16 +1,10 @@
-// ============================================
-// app.JS - ARCHIVO PRINCIPAL
-// ============================================
 
-/**
- * Inicializa la aplicación
- */
+//Inicializa la aplicación
+
 async function inicializarApp() {
     console.log('🚀 Iniciando Estética360...');
 
-    // ------------------------------
-    // 1️⃣ Cargar usuario desde sessionStorage
-    // ------------------------------
+    // Cargar usuario desde sessionStorage
     const usuario = JSON.parse(sessionStorage.getItem("usuario"));
     if (!usuario) {
         window.location.href = "login.html";
@@ -20,15 +14,9 @@ async function inicializarApp() {
     State.usuarioActual = usuario;
     console.log("👤 Usuario actual:", State.usuarioActual);
 
-    // ------------------------------
-    // 2️⃣ Renderizar navbar y sidebar
-    // ------------------------------
     Navbar.render();
     Sidebar.render();
 
-    // ------------------------------
-    // 3️⃣ Mostrar indicador de carga
-    // ------------------------------
     mostrarCargando();
 
     try {
@@ -53,9 +41,8 @@ async function inicializarApp() {
             turnos: State.turnos.length
         });
 
-        // ------------------------------
-        // 5️⃣ Renderizar sección inicial
-        // ------------------------------
+        //  Renderizar sección inicial
+
         if (State.seccionActual === "empleados") {
             Empleados.render();
         } else if (State.seccionActual === "turnos") {
@@ -64,9 +51,8 @@ async function inicializarApp() {
             Inicio.render();
         }
 
-        // ------------------------------
-        // 6️⃣ Mostrar notificación de bienvenida
-        // ------------------------------
+        //  Mostrar notificación de bienvenida
+
         setTimeout(() => {
             Utilidades.mostrarNotificacion(`¡Bienvenido/a ${State.usuarioActual.nombre}! 🎉`);
         }, 500);
@@ -87,9 +73,7 @@ async function inicializarApp() {
     console.log('✅ Aplicación iniciada correctamente');
 }
 
-/**
- * Muestra un indicador de carga
- */
+
 function mostrarCargando() {
     const mainContent = document.getElementById("mainContent");
     if (mainContent) {
@@ -105,9 +89,7 @@ function mostrarCargando() {
     }
 }
 
-/**
- * Carga empleados desde la API
- */
+
 async function cargarEmpleados() {
     try {
         console.log('👥 Cargando empleados...');
@@ -124,9 +106,7 @@ async function cargarEmpleados() {
     }
 }
 
-/**
- * Carga servicios desde la API
- */
+
 async function cargarServicios() {
     try {
         console.log('✂️ Cargando servicios...');
@@ -138,9 +118,6 @@ async function cargarServicios() {
     }
 }
 
-/**
- * Carga clientes desde la API
- */
 async function cargarClientes() {
     try {
         console.log('👤 Cargando clientes...');
@@ -165,9 +142,6 @@ async function cargarClientes() {
     }
 }
 
-/**
- * Carga turnos desde la API
- */
 async function cargarTurnos() {
     try {
         console.log('📅 Cargando turnos...');
@@ -185,7 +159,7 @@ async function cargarTurnos() {
             return;
         }
 
-        // 🔄 Mapeo usando los nombres EXACTOS de campos de tu API
+        // Mapeo usando los nombres EXACTOS de campos de tu API
         const turnosMapeados = turnos.map(t => {
             const nombreCliente = `${t.cliente_nombre || ''} ${t.cliente_apellido || ''}`.trim();
             const nombreEmpleado = `${t.empleado_nombre || ''} ${t.empleado_apellido || ''}`.trim();
@@ -213,9 +187,7 @@ async function cargarTurnos() {
     }
 }
 
-/**
- * Carga avisos desde la base de datos
- */
+
 async function cargarAvisos() {
     try {
         console.log('📢 Cargando avisos...');
@@ -227,21 +199,16 @@ async function cargarAvisos() {
     }
 }
 
-// ------------------------------
-// Escuchar evento DOMContentLoaded
-// ------------------------------
+
 window.addEventListener('DOMContentLoaded', () => {
     inicializarApp();
 });
 
-// ------------------------------
 // Funciones globales auxiliares
-// ------------------------------
+
 window.toggleSidebarMobile = Utilidades.toggleSidebarMobile;
 
-// ------------------------------
 // Función global para cambiar sección (usada por navbar/sidebar)
-// ------------------------------
 window.cambiarSeccion = function(seccion) {
     Router.navegarSeccion(seccion);
 };
@@ -281,9 +248,8 @@ window.recargarDatos = async function() {
     }
 };
 
-// ------------------------------
 // Exportar cargarTurnos para uso en otros archivos
-// ------------------------------
+
 window.cargarTurnos = cargarTurnos;
 
 console.log("✅ app.js cargado");

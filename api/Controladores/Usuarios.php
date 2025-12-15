@@ -11,9 +11,8 @@ class Usuarios {
         $this->pdo = $conexion->getConexion();
     }
 
-    // -------------------------
     // GET → Obtener todos los usuarios
-    // -------------------------
+
     public function get() {
         try {
             $stmt = $this->pdo->query("SELECT * FROM usuarios");
@@ -25,9 +24,7 @@ class Usuarios {
         }
     }
 
-    // -------------------------
     // POST → Crear usuario
-    // -------------------------
     public function post() {
         $data = json_decode(file_get_contents("php://input"), true);
 
@@ -56,10 +53,8 @@ $stmt->execute([
         }
     }
 
-    // -------------------------
-    // PUT → Actualizar usuario
-    // -------------------------
-    // -------------------------
+ 
+// -------------------------
 // PUT → Actualizar usuario
 // -------------------------
 public function put() {

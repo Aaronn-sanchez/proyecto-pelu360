@@ -13,9 +13,7 @@ class Turnos {
         $this->turnosClass = new TurnosClass($pdo);
     }
 
-    // =====================================================
-    // GET
-    // =====================================================
+
     public function get() {
         header("Content-Type: application/json");
         header("Access-Control-Allow-Origin: *");
@@ -72,7 +70,6 @@ class Turnos {
         try {
             $data = json_decode(file_get_contents("php://input"), true);
             
-            // ✅ NUEVA LÓGICA: Si viene "accion: aceptar", usar el método específico
             if (isset($data['accion']) && $data['accion'] === 'aceptar') {
                 $resultado = $this->turnosClass->aceptar($data);
             } else {

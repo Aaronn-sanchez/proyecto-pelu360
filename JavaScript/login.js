@@ -63,10 +63,7 @@ const Login = {
     }
 };
 
-// ============================================
 // EVENTOS
-// ============================================
-
 document.addEventListener('DOMContentLoaded', () => {
     const btnLogin = document.getElementById('btnLogin');
     const loginForm = document.getElementById('loginForm');

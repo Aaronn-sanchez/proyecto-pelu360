@@ -21,10 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Cargar conexión a la base de datos
 require_once __DIR__ . '/Conexion.php';
 
-// Obtener recurso (ej: usuarios, turnos, clientes)
 $recurso = $_GET['recurso'] ?? null;
 
-// Validar recurso enviado
 if (!$recurso) {
     echo json_encode(["error" => "No se especificó ningún recurso."]);
     exit;
@@ -33,26 +31,19 @@ if (!$recurso) {
 // Nombre del archivo del controlador
 $controladorPath = __DIR__ . "/Controladores/" . $recurso . ".php";
 
-// Verificar si el controlador existe
 if (!file_exists($controladorPath)) {
     echo json_encode(["error" => "El controlador '$recurso' no existe."]);
     exit;
 }
 
-// Incluir controlador solicitado
 require_once $controladorPath;
 
-
-// Clase con el mismo nombre del archivo
 $claseControlador = ucfirst($recurso);
 
-// Instanciamos
 $controlador = new $claseControlador();
 
-// Determinamos método HTTP
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Routing principal
 switch ($method) {
     case 'GET':
         $controlador->get();

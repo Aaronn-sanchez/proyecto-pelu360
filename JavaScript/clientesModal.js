@@ -1,6 +1,4 @@
-// ============================================
 // MÓDULO: CLIENTES (Integrado en Turnos)
-// ============================================
 
 const ClientesModal = {
     
@@ -34,9 +32,8 @@ const ClientesModal = {
         });
     },
     
-    // Crear el modal en el DOM
     crearModal() {
-        // Verificar si ya existe
+        
         if (document.getElementById("modalNuevoCliente")) return;
         
         const modalHTML = `
@@ -156,9 +153,7 @@ const ClientesModal = {
                 return;
             }
             
-            // ============================================
             // ENVIAR AL SERVIDOR
-            // ============================================
             
             const nuevoCliente = {
                 Nombre: nombre,
@@ -180,7 +175,6 @@ const ClientesModal = {
                 const modal = bootstrap.Modal.getInstance(document.getElementById("modalNuevoCliente"));
                 modal.hide();
                 
-                // Limpiar formulario
                 form.reset();
                 
                 // Recargar clientes y selector
