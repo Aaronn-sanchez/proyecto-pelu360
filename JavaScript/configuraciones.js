@@ -3,9 +3,10 @@
 // ============================================
 
 const Config = {
+    // URL base de la API (centralizada)
     API_BASE_URL: (window.location.hostname === "localhost")
-    ? "http://localhost/estetica360/api/index.php"
-    : "https://sanchez.ctpoba.com/estetica360/api/index.php",
+        ? "http://localhost/estetica360/api/index.php"
+        : "https://sanchez.ctpoba.com/estetica360/api/index.php",
 
     // Configuración de menús por sección
     menuConfig: {
@@ -15,7 +16,7 @@ const Config = {
         ],
         turnos: [
             {id: "ver", icon: "fa-calendar-check", text: "Ver Turnos", roles: ["administrador", "empleado"]},
-            {id: "mis_turnos", icon: "fa-user-clock", text: "Mis Turnos", roles: ["empleado"]}, // ✅ NUEVO
+            {id: "mis_turnos", icon: "fa-user-clock", text: "Mis Turnos", roles: ["empleado"]},
             {id: "agregar", icon: "fa-plus-circle", text: "Agregar Turno", roles: ["administrador", "empleado"]}
         ],
         empleados: [
@@ -31,3 +32,5 @@ const Config = {
         {seccion: "empleados", texto: "Empleados", roles: ["administrador"]}
     ]
 };
+
+console.log("✅ configuraciones.js cargado");

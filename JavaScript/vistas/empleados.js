@@ -1,8 +1,27 @@
 // ============================================
-// VISTA: EMPLEADOS (versión con modal personalizado)
+// VISTA: EMPLEADOS (versión optimizada)
 // ============================================
 
 const Empleados = {
+
+    // ============================================
+    // VALIDACIÓN COMPARTIDA
+    // ============================================
+    validarDatosEmpleado(datos) {
+        const { nombre, apellido, usuario_login, password, esNuevo } = datos;
+        
+        if (!nombre || !apellido || !usuario_login) {
+            Utilidades.mostrarNotificacion('⚠️ Todos los campos son obligatorios', 'error');
+            return false;
+        }
+        
+        if (esNuevo && !password) {
+            Utilidades.mostrarNotificacion('⚠️ La contraseña es obligatoria', 'error');
+            return false;
+        }
+        
+        return true;
+    },
 
     render() {
         if (!State.usuarioActual) {
@@ -22,14 +41,11 @@ const Empleados = {
             return;
         }
 
-
-
         let html = `
             <div class="content-header">
                 <h2>👥 Administración de Empleados</h2>
                 <p>Gestiona el equipo de trabajo - Usuarios del Sistema</p>
             </div>
-            
             
             <div class="table-responsive">
                 <table class="table-custom">
@@ -123,22 +139,41 @@ const Empleados = {
                 ? '<span class="badge-custom badge-confirmado"><i class="fas fa-crown"></i> Admin</span>'
                 : '<span class="badge-custom badge-pendiente"><i class="fas fa-user"></i> Empleado</span>';
 
+            // 🔒 Verificar si es administrador
+            const esAdmin = e.rol === "administrador";
+            const esMiUsuario = State.usuarioActual.id_usuario === e.id_usuario;
+
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td><strong>#${e.id_usuario}</strong></td>
-                <td>${e.nombre}</td>
+                <td>${e.nombre}${esMiUsuario ? ' <span class="badge-custom" style="background: #667eea; color: white; font-size: 0.7rem;"><i class="fas fa-user"></i> Tú</span>' : ''}</td>
                 <td>${e.apellido}</td>
                 <td><code>${e.usuario_login}</code></td>
                 <td>${rolBadge}</td>
                 <td>
-                    <button class="btn btn-custom btn-edit btn-sm-custom" 
-                            onclick="Empleados.abrirModalEditar(${index})">
-                        <i class="fas fa-edit"></i> Modificar
-                    </button>
-                    <button class="btn btn-custom btn-delete btn-sm-custom ms-2" 
-                            onclick="Empleados.eliminar(${index})">
-                        <i class="fas fa-trash"></i> Eliminar
-                    </button>
+                    ${esAdmin ? `
+                        <button class="btn btn-custom btn-sm-custom" 
+                                style="background: #f0f0f0; color: #999; cursor: not-allowed;"
+                                disabled
+                                title="No se puede modificar administradores">
+                            <i class="fas fa-lock"></i> Protegido
+                        </button>
+                        <button class="btn btn-custom btn-sm-custom ms-2" 
+                                style="background: #fee; color: #999; cursor: not-allowed;"
+                                disabled
+                                title="No se puede eliminar administradores">
+                            <i class="fas fa-shield-alt"></i> Protegido
+                        </button>
+                    ` : `
+                        <button class="btn btn-custom btn-edit btn-sm-custom" 
+                                onclick="Empleados.abrirModalEditar(${index})">
+                            <i class="fas fa-edit"></i> Modificar
+                        </button>
+                        <button class="btn btn-custom btn-delete btn-sm-custom ms-2" 
+                                onclick="Empleados.eliminar(${index})">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    `}
                 </td>
             `;
             tbody.appendChild(tr);
@@ -149,7 +184,15 @@ const Empleados = {
         const empleado = State.empleados[index];
         if (!empleado) return;
 
-        // Completar campos del modal
+        // 🔒 PROTECCIÓN: No permitir editar administradores
+        if (empleado.rol === "administrador") {
+            Utilidades.mostrarNotificacion(
+                '🔒 Los administradores están protegidos y no pueden ser modificados',
+                'error'
+            );
+            return;
+        }
+
         document.getElementById("editIdEmpleado").value = empleado.id_usuario;
         document.getElementById("editNombre").value = empleado.nombre;
         document.getElementById("editApellido").value = empleado.apellido;
@@ -159,7 +202,6 @@ const Empleados = {
         const modal = new bootstrap.Modal(document.getElementById('modalEditarEmpleado'));
         modal.show();
 
-        // Asignar evento de guardar (se limpia primero para evitar duplicados)
         const btnGuardar = document.getElementById("btnGuardarCambiosEmpleado");
         btnGuardar.onclick = async () => {
             await this.guardarCambios();
@@ -168,40 +210,36 @@ const Empleados = {
     },
 
     async guardarCambios() {
-    const id = document.getElementById("editIdEmpleado").value;
-    const nombre = document.getElementById("editNombre").value.trim();
-    const apellido = document.getElementById("editApellido").value.trim();
-    const usuario_login = document.getElementById("editUsuario").value.trim();
-    const rol = document.getElementById("editRol").value;
-    const password = document.getElementById("editPassword").value.trim();
+        const id = document.getElementById("editIdEmpleado").value;
+        const nombre = document.getElementById("editNombre").value.trim();
+        const apellido = document.getElementById("editApellido").value.trim();
+        const usuario_login = document.getElementById("editUsuario").value.trim();
+        const rol = document.getElementById("editRol").value;
+        const password = document.getElementById("editPassword").value.trim();
 
-    if (!nombre || !apellido || !usuario_login) {
-        Utilidades.mostrarNotificacion("⚠️ Todos los campos son obligatorios", "error");
-        return;
-    }
+        // ✅ Usar validación compartida
+        if (!this.validarDatosEmpleado({ nombre, apellido, usuario_login, esNuevo: false })) {
+            return;
+        }
 
-    // Creamos el objeto con los datos a actualizar
-    const empleadoActualizado = { nombre, apellido, usuario_login, rol };
+        const empleadoActualizado = { nombre, apellido, usuario_login, rol };
 
-    // Solo añadimos la contraseña si se ingresó
-    if (password) {
-        empleadoActualizado.password = password;
-    }
+        if (password) {
+            empleadoActualizado.password = password;
+        }
 
-    const respuesta = await ApiServicios.modificarEmpleado(id, empleadoActualizado);
+        const respuesta = await ApiServicios.modificarEmpleado(id, empleadoActualizado);
 
-    if (respuesta && !respuesta.error) {
-        await ApiServicios.obtenerEmpleados();
-        this.renderTabla();
-        Utilidades.mostrarNotificacion("✅ Empleado actualizado correctamente");
-    } else {
-        Utilidades.mostrarNotificacion("❌ Error al actualizar el empleado", "error");
-    }
-},
-
+        if (respuesta && !respuesta.error) {
+            await ApiServicios.obtenerEmpleados();
+            this.renderTabla();
+            Utilidades.mostrarNotificacion("✅ Empleado actualizado correctamente");
+        } else {
+            Utilidades.mostrarNotificacion("❌ Error al actualizar el empleado", "error");
+        }
+    },
 
     async eliminar(index) {
-        // Verificar permisos
         if (!State.usuarioActual || State.usuarioActual.rol !== "administrador") {
             Utilidades.mostrarNotificacion('🚫 No tienes permisos para eliminar empleados', 'error');
             return;
@@ -213,7 +251,24 @@ const Empleados = {
             return;
         }
 
-        // Confirmación con Bootstrap modal o nativo
+        // 🔒 PROTECCIÓN 1: No permitir eliminar administradores
+        if (empleado.rol === "administrador") {
+            Utilidades.mostrarNotificacion(
+                '🔒 Los administradores están protegidos y no pueden ser eliminados',
+                'error'
+            );
+            return;
+        }
+
+        // 🔒 PROTECCIÓN 2: No permitir eliminar tu propio usuario (redundante pero extra seguridad)
+        if (State.usuarioActual.id_usuario === empleado.id_usuario) {
+            Utilidades.mostrarNotificacion(
+                '🚫 No puedes eliminar tu propio usuario',
+                'error'
+            );
+            return;
+        }
+
         if (!confirm(`¿Seguro que deseas eliminar a ${empleado.nombre} ${empleado.apellido}? Esta acción no se puede deshacer.`)) {
             return;
         }
@@ -235,9 +290,6 @@ const Empleados = {
         }
     },
 
-    // ============================================
-    // FORMULARIO: AGREGAR NUEVO EMPLEADO
-    // ============================================
     renderAgregar() {
         if (!State.usuarioActual || State.usuarioActual.rol !== "administrador") {
             Utilidades.mostrarNotificacion('🚫 No tienes permisos para agregar empleados', 'error');
@@ -306,8 +358,8 @@ const Empleados = {
         const contraseña = document.getElementById("nuevoPassword").value.trim();
         const rol = document.getElementById("nuevoRol").value;
 
-        if (!nombre || !apellido || !usuario_login || !contraseña) {
-            Utilidades.mostrarNotificacion('⚠️ Todos los campos son obligatorios', 'error');
+        // ✅ Usar validación compartida
+        if (!this.validarDatosEmpleado({ nombre, apellido, usuario_login, password: contraseña, esNuevo: true })) {
             return;
         }
 
@@ -328,7 +380,5 @@ const Empleados = {
             console.error("Error al agregar empleado:", error);
             Utilidades.mostrarNotificacion('⚠️ Error de conexión con el servidor', 'error');
         }
-    },
-
-
+    }
 };

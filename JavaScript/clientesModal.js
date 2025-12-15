@@ -74,7 +74,7 @@ const ClientesModal = {
                                     <input type="tel" class="form-control form-control-custom" 
                                            id="modalTelefono" placeholder="Ej: 381456789" required>
                                     <small class="text-muted">
-                                        <i class="fas fa-info-circle"></i> El teléfono debe ser único
+                                        <i class="fas fa-info-circle"></i> 6-15 dígitos, sin espacios ni guiones
                                     </small>
                                 </div>
                                 
@@ -106,10 +106,64 @@ const ClientesModal = {
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
             
+            const nombre = document.getElementById("modalNombre").value.trim();
+            const apellido = document.getElementById("modalApellido").value.trim();
+            const telefono = document.getElementById("modalTelefono").value.trim();
+            
+            // ============================================
+            // VALIDACIONES FRONTEND
+            // ============================================
+            
+            // Validar nombre
+            if (!Utilidades.validarNombre(nombre)) {
+                Utilidades.mostrarNotificacion(
+                    "❌ El nombre solo puede contener letras y espacios", 
+                    "error"
+                );
+                document.getElementById("modalNombre").focus();
+                return;
+            }
+            
+            // Validar apellido
+            if (!Utilidades.validarNombre(apellido)) {
+                Utilidades.mostrarNotificacion(
+                    "❌ El apellido solo puede contener letras y espacios", 
+                    "error"
+                );
+                document.getElementById("modalApellido").focus();
+                return;
+            }
+            
+            // Validar teléfono
+            if (!Utilidades.validarTelefono(telefono)) {
+                Utilidades.mostrarNotificacion(
+                    "❌ Teléfono inválido (debe tener entre 6 y 15 dígitos)", 
+                    "error"
+                );
+                document.getElementById("modalTelefono").focus();
+                return;
+            }
+            
+            // Verificar si ya existe un cliente con ese teléfono
+            const existe = State.clientes.some(c => c.Telefono === telefono);
+            
+            if (existe) {
+                Utilidades.mostrarNotificacion(
+                    "❌ Ya existe un cliente registrado con ese teléfono", 
+                    "error"
+                );
+                document.getElementById("modalTelefono").focus();
+                return;
+            }
+            
+            // ============================================
+            // ENVIAR AL SERVIDOR
+            // ============================================
+            
             const nuevoCliente = {
-                Nombre: document.getElementById("modalNombre").value.trim(),
-                Apellido: document.getElementById("modalApellido").value.trim(),
-                Telefono: document.getElementById("modalTelefono").value.trim()
+                Nombre: nombre,
+                Apellido: apellido,
+                Telefono: telefono
             };
             
             const resultado = await ApiServicios.crearCliente(nuevoCliente);
@@ -117,7 +171,10 @@ const ClientesModal = {
             if (resultado.error) {
                 Utilidades.mostrarNotificacion(`❌ ${resultado.error}`, "error");
             } else if (resultado.success) {
-                Utilidades.mostrarNotificacion("✅ Cliente registrado exitosamente");
+                Utilidades.mostrarNotificacion(
+                    "✅ Cliente registrado exitosamente", 
+                    "success"
+                );
                 
                 // Cerrar modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById("modalNuevoCliente"));
@@ -126,10 +183,11 @@ const ClientesModal = {
                 // Limpiar formulario
                 form.reset();
                 
-                // Recargar selector de clientes
+                // Recargar clientes y selector
+                await window.cargarClientes();
                 await this.cargarEnSelector();
                 
-                // Autoseleccionar el nuevo cliente (el último agregado)
+                // Autoseleccionar el nuevo cliente
                 const select = document.getElementById("clienteSelect");
                 const ultimoCliente = State.clientes[State.clientes.length - 1];
                 if (ultimoCliente) {

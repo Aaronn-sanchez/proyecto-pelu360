@@ -12,9 +12,6 @@ const State = {
     turnos: [],
     clientes: [],
     
-    // Alertas
-    alertas: [],
-    
     // Estado de navegación
     seccionActual: "inicio",
     accionActual: "ver"
@@ -22,7 +19,10 @@ const State = {
 
 // Funciones para modificar el estado
 const StateManager = {
-    // Usuario
+    // ============================================
+    // USUARIO
+    // ============================================
+    
     setUsuario(usuario) {
         State.usuarioActual = usuario;
     },
@@ -34,7 +34,10 @@ const StateManager = {
         sessionStorage.removeItem("usuario");
     },
     
-    // Empleados
+    // ============================================
+    // EMPLEADOS
+    // ============================================
+    
     setEmpleados(empleados) {
         State.empleados = empleados;
         console.log("✅ Estado: Empleados actualizados", empleados.length);
@@ -44,11 +47,15 @@ const StateManager = {
         State.empleados.push(empleado);
     },
     
-    eliminarEmpleado(index) {
-        State.empleados.splice(index, 1);
+    eliminarEmpleado(id_usuario) {
+        State.empleados = State.empleados.filter(e => e.id_usuario != id_usuario);
+        console.log(`🗑️ Empleado ${id_usuario} eliminado del estado`);
     },
     
-    // Servicios
+    // ============================================
+    // SERVICIOS
+    // ============================================
+    
     setServicios(servicios) {
         State.servicios = servicios;
         console.log("✅ Estado: Servicios actualizados", servicios.length);
@@ -58,11 +65,15 @@ const StateManager = {
         State.servicios.push(servicio);
     },
     
-    eliminarServicio(index) {
-        State.servicios.splice(index, 1);
+    eliminarServicio(id_servicio) {
+        State.servicios = State.servicios.filter(s => s.id_servicio != id_servicio);
+        console.log(`🗑️ Servicio ${id_servicio} eliminado del estado`);
     },
     
-    // Turnos
+    // ============================================
+    // TURNOS
+    // ============================================
+    
     setTurnos(turnos) {
         State.turnos = turnos;
         console.log("✅ Estado: Turnos actualizados", turnos.length);
@@ -72,18 +83,23 @@ const StateManager = {
         State.turnos.push(turno);
     },
     
-    eliminarTurno(index) {
-        State.turnos.splice(index, 1);
+    eliminarTurno(id_turno) {
+        State.turnos = State.turnos.filter(t => t.id_turno != id_turno);
+        console.log(`🗑️ Turno ${id_turno} eliminado del estado`);
     },
     
     actualizarTurno(id_turno, turnoActualizado) {
         const index = State.turnos.findIndex(t => t.id_turno == id_turno);
         if (index !== -1) {
             State.turnos[index] = turnoActualizado;
+            console.log(`✏️ Turno ${id_turno} actualizado en el estado`);
         }
     },
     
-    // Clientes
+    // ============================================
+    // CLIENTES
+    // ============================================
+    
     setClientes(clientes) {
         State.clientes = clientes;
         console.log("✅ Estado: Clientes actualizados", clientes.length);
@@ -93,23 +109,18 @@ const StateManager = {
         State.clientes.push(cliente);
     },
     
-    eliminarCliente(index) {
-        State.clientes.splice(index, 1);
+    eliminarCliente(id_cliente) {
+        State.clientes = State.clientes.filter(c => c.id_cliente != id_cliente);
+        console.log(`🗑️ Cliente ${id_cliente} eliminado del estado`);
     },
     
-    // Alertas
-    agregarAlerta(alerta) {
-        State.alertas.push(alerta);
-    },
+    // ============================================
+    // NAVEGACIÓN
+    // ============================================
     
-    eliminarAlerta(index) {
-        State.alertas.splice(index, 1);
-    },
-    
-    // Navegación
     cambiarSeccion(seccion) {
         State.seccionActual = seccion;
-        console.log("📍 Sección actual:", seccion);
+        console.log("🔖 Sección actual:", seccion);
     },
     
     cambiarAccion(accion) {
