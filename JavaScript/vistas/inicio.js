@@ -38,7 +38,7 @@ const Inicio = {
         
         let html = `
             <div class="content-header">
-                <h2>¡Bienvenido/a, ${State.usuarioActual.nombre}! 👋</h2>
+                <h2>¡Bienvenido/a, ${State.usuarioActual.nombre}! </h2>
                 <p>Aquí tienes un resumen de la actividad de hoy</p>
             </div>
             
@@ -65,10 +65,10 @@ const Inicio = {
                 </div>
             </div>
             
-            <h4 class="mb-3">📅 Turnos de Hoy</h4>
+            <h4 class="mb-3"> Turnos de Hoy</h4>
             <div class="row g-3" id="turnosDelDia"></div>
             
-            <h4 class="mt-4 mb-3">📢 Alertas Importantes</h4>
+            <h4 class="mt-4 mb-3"> Alertas Importantes</h4>
             <div id="alertasContainer"></div>
         `;
         

@@ -19,9 +19,7 @@ const State = {
 
 // Funciones para modificar el estado
 const StateManager = {
-    // ============================================
     // USUARIO
-    // ============================================
     
     setUsuario(usuario) {
         State.usuarioActual = usuario;
@@ -34,9 +32,7 @@ const StateManager = {
         sessionStorage.removeItem("usuario");
     },
     
-    // ============================================
     // EMPLEADOS
-    // ============================================
     
     setEmpleados(empleados) {
         State.empleados = empleados;
@@ -52,9 +48,7 @@ const StateManager = {
         console.log(`🗑️ Empleado ${id_usuario} eliminado del estado`);
     },
     
-    // ============================================
     // SERVICIOS
-    // ============================================
     
     setServicios(servicios) {
         State.servicios = servicios;
@@ -70,9 +64,7 @@ const StateManager = {
         console.log(`🗑️ Servicio ${id_servicio} eliminado del estado`);
     },
     
-    // ============================================
     // TURNOS
-    // ============================================
     
     setTurnos(turnos) {
         State.turnos = turnos;
@@ -96,9 +88,7 @@ const StateManager = {
         }
     },
     
-    // ============================================
     // CLIENTES
-    // ============================================
     
     setClientes(clientes) {
         State.clientes = clientes;
@@ -114,9 +104,7 @@ const StateManager = {
         console.log(`🗑️ Cliente ${id_cliente} eliminado del estado`);
     },
     
-    // ============================================
     // NAVEGACIÓN
-    // ============================================
     
     cambiarSeccion(seccion) {
         State.seccionActual = seccion;

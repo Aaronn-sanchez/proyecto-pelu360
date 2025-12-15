@@ -5,7 +5,7 @@
 const Router = {
     /**
      * Navega a una sección diferente
-     * @param {string} seccion - Nombre de la sección (inicio, turnos, empleados)
+     * @param {string} seccion 
      */
     navegarSeccion(seccion) {
         StateManager.cambiarSeccion(seccion);
@@ -20,7 +20,7 @@ const Router = {
     
     /**
      * Navega a una acción dentro de la sección actual
-     * @param {string} accion - Nombre de la acción (ver, agregar, buscar, etc.)
+     * @param {string} accion 
      */
     navegarAccion(accion) {
         StateManager.cambiarAccion(accion);
