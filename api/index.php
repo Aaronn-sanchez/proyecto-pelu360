@@ -3,8 +3,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-ini_set('display_errors', 0);  // no mostrar errores en el navegador
-ini_set('log_errors', 1);      // guardar errores en log
+ini_set('display_errors', 0);  
+ini_set('log_errors', 1);      
 error_reporting(E_ALL);
 
 

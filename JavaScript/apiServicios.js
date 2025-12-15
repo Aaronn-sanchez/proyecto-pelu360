@@ -336,35 +336,40 @@ const ApiServicios = {
 
     async eliminarTurno(id_turno) {
         try {
-            const response = await fetch(`${this.baseURL}?recurso=turnos`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id_turno })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                await this.obtenerTurnos();
-                console.log("✅ Turno eliminado correctamente");
-            }
-            
-            return data;
-            
-        } catch (error) {
-            console.error('❌ Error al eliminar turno:', error);
-            return { 
-                success: false, 
-                msg: 'Error de conexión' 
-            };
+        console.log('🗑️ Eliminando turno ID:', id_turno);
+        
+        const response = await fetch(`${this.baseURL}?recurso=turnos`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id_turno: parseInt(id_turno) })
+        });
+        
+        console.log('📡 Status de eliminación:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    },
+        
+        const data = await response.json();
+        console.log('📥 Respuesta del servidor:', data);
+        
+        if (data.success) {
+            await this.obtenerTurnos();
+            console.log("✅ Turno eliminado correctamente");
+        }
+        
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Error al eliminar turno:', error);
+        return { 
+            success: false, 
+            msg: 'Error de conexión: ' + error.message
+        };
+    }
+},
 
     async aceptarTurno(id_turno, id_empleado, rol) {
     try {
@@ -376,7 +381,7 @@ const ApiServicios = {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                accion: 'aceptar',  // 🔑 Clave para diferenciar de modificar
+                accion: 'aceptar',  // Clave para diferenciar de modificar
                 id_turno: id_turno,
                 id_empleado: id_empleado,
                 rol: rol

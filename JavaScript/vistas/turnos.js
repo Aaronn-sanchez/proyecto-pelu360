@@ -105,37 +105,55 @@ const Turnos = {
     // ============================================
     // RENDER DE BOTONES SEGÚN PERMISOS
     // ============================================
-    renderBotonesAccion(turno) {
-        const usuario = State.usuarioActual;
-        
-        if (usuario.rol === "administrador") {
-            return `
-                <div class="card-footer-custom">
-                    <button class="btn btn-custom btn-edit btn-sm-custom" 
-                            onclick="Turnos.irAModificar(${turno.id})">
-                        <i class="fas fa-edit"></i> Modificar
+   renderBotonesAccion(turno) {
+    const usuario = State.usuarioActual;
+    
+    if (usuario.rol === "administrador") {
+        return `
+            <div class="card-footer-custom">
+                <button class="btn btn-custom btn-edit btn-sm-custom" 
+                        onclick="Turnos.irAModificar(${turno.id})"
+                        title="Modificar turno">
+                    <i class="fas fa-edit"></i> Modificar
+                </button>
+                
+                ${turno.estado !== "Cancelado" ? `
+                    <button class="btn btn-custom btn-sm-custom ms-2" 
+                            style="background: #f59e0b; border-color: #f59e0b; color: white;"
+                            onclick="Turnos.cancelar(${turno.id})"
+                            title="Marcar como cancelado">
+                        <i class="fas fa-ban"></i> Cancelar
                     </button>
-                    <button class="btn btn-custom btn-delete btn-sm-custom" 
-                            onclick="Turnos.cancelar(${turno.id})">
-                        <i class="fas fa-times"></i> Cancelar
-                    </button>
-                </div>
-            `;
-        }
-        
-        if (usuario.rol === "empleado" && turno.empleado === `${usuario.nombre} ${usuario.apellido}`) {
-            return `
-                <div class="card-footer-custom">
+                ` : ''}
+                
+                <button class="btn btn-custom btn-delete btn-sm-custom ms-2" 
+                        onclick="Turnos.eliminar(${turno.id})"
+                        title="Eliminar permanentemente">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            </div>
+        `;
+    }
+    
+    if (usuario.rol === "empleado" && turno.empleado === `${usuario.nombre} ${usuario.apellido}`) {
+        return `
+            <div class="card-footer-custom">
+                ${turno.estado === "Pendiente" ? `
                     <button class="btn btn-custom btn-primary-custom btn-sm-custom" 
                             onclick="Turnos.aceptar(${turno.id})">
                         <i class="fas fa-check"></i> Aceptar
                     </button>
-                </div>
-            `;
-        }
-        
-        return `<div class="card-footer-custom"><span class="text-muted">Sin permisos</span></div>`;
-    },
+                ` : `
+                    <span class="badge-custom badge-confirmado">
+                        <i class="fas fa-check-circle"></i> Ya confirmado
+                    </span>
+                `}
+            </div>
+        `;
+    }
+    
+    return `<div class="card-footer-custom"><span class="text-muted">Sin permisos</span></div>`;
+},
 
     // ============================================
     // FORMULARIO DE AGREGAR/MODIFICAR (UNIFICADO)
@@ -558,13 +576,55 @@ const Turnos = {
         }
     },
 
+    async eliminar(id_turno) {
+    if (State.usuarioActual?.rol !== "administrador") {
+        Utilidades.mostrarNotificacion(" Solo administradores pueden eliminar turnos", "error");
+        return;
+    }
+
+    const turno = State.turnos.find(t => t.id == id_turno);
+
+    if (!turno) {
+        Utilidades.mostrarNotificacion("❌ Turno no encontrado", "error");
+        return;
+    }
+
+    const confirmar = confirm(
+        `ELIMINAR PERMANENTEMENTE\n\n` +
+        `Cliente: ${turno.cliente}\n` +
+        `Servicio: ${turno.servicio}\n` +
+        `Fecha: ${turno.dia} - ${turno.hora}\n\n` +
+        `Esta acción NO se puede deshacer.\n\n` +
+        ` Si solo deseas cancelarlo, usa el botón "Cancelar" en su lugar.`
+    );
+    
+    if (!confirmar) return;
+
+    try {
+        const resultado = await ApiServicios.eliminarTurno(id_turno);
+
+        if (resultado.success) {
+            Utilidades.mostrarNotificacion("🗑️ Turno eliminado permanentemente", "success");
+            this.renderLista();
+        } else {
+            Utilidades.mostrarNotificacion(
+                `❌ ${resultado.msg || 'Error al eliminar turno'}`, 
+                "error"
+            );
+        }
+    } catch (error) {
+        console.error("Error al eliminar turno:", error);
+        Utilidades.mostrarNotificacion(" Error de conexión con el servidor", "error");
+    }
+},
+
     // ============================================
     // GESTIÓN DE SERVICIOS
     // ============================================
     renderServicios() {
         let html = `
             <div class="content-header">
-                <h2>✂️ Gestión de Servicios</h2>
+                <h2> Gestión de Servicios</h2>
                 <p>Administra los servicios disponibles para los turnos</p>
                 <button class="btn btn-custom btn-primary-custom" onclick="Turnos.toggleFormServicio()">
                     <i class="fas fa-plus"></i> Agregar Nuevo Servicio

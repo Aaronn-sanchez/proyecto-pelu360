@@ -43,7 +43,7 @@ const Empleados = {
 
         let html = `
             <div class="content-header">
-                <h2>👥 Administración de Empleados</h2>
+                <h2> Administración de Empleados</h2>
                 <p>Gestiona el equipo de trabajo - Usuarios del Sistema</p>
             </div>
             
@@ -69,7 +69,7 @@ const Empleados = {
                 <div class="modal-content" style="border-radius:12px;">
                   <div class="modal-header" style="border-bottom:none;">
                     <h5 class="modal-title text-gradient" id="modalEditarEmpleadoLabel">
-                        ✏️ Editar Empleado
+                         Editar Empleado
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                   </div>
@@ -146,7 +146,7 @@ const Empleados = {
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td><strong>#${e.id_usuario}</strong></td>
-                <td>${e.nombre}${esMiUsuario ? ' <span class="badge-custom" style="background: #667eea; color: white; font-size: 0.7rem;"><i class="fas fa-user"></i> Tú</span>' : ''}</td>
+                <td>${e.nombre}${esMiUsuario ? ' <span class="badge-custom" style="background: #32343dff; color: white; font-size: 0.7rem;"><i class="fas fa-user"></i> Tú</span>' : ''}</td>
                 <td>${e.apellido}</td>
                 <td><code>${e.usuario_login}</code></td>
                 <td>${rolBadge}</td>
@@ -299,7 +299,7 @@ const Empleados = {
 
         const html = `
         <div class="content-header">
-            <h2>➕ Agregar Nuevo Empleado</h2>
+            <h2> Agregar Nuevo Empleado</h2>
             <p>Completa los datos del nuevo empleado</p>
         </div>
 
