@@ -7,20 +7,17 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- libreria de iconos xd -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <link rel="stylesheet" href="turnos.css">
+    
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-   <!-- el boton del menu -->
+    <!-- Botón flotante para abrir sidebar (visible en todas las pantallas) -->
     <button class="btn-sidebar-toggle" onclick="toggleSidebarMobile()">
         <i class="fas fa-bars"></i>
     </button>
 
-     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-custom" id="navbar">
         <div class="container-fluid">
 
@@ -37,21 +34,22 @@
             
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center" id="navMenu">
-
+                    
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Overlay para cerrar sidebar en móvil -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebarMobile()"></div>
 
+    <!-- Contenedor Principal -->
     <div class="main-container">
         
-    
+        <!-- Sidebar / Menú Lateral -->
         <aside class="sidebar" id="sidebar">
         </aside>
         
+        <!-- Área de Contenido Principal -->
         <main class="content-area" id="mainContent">
         </main>
         
@@ -60,13 +58,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
      
 
-    <script src="javaScript/state.js"></script>
+ <script src="javaScript/state.js"></script>
     <script src="javaScript/apiServicios.js"></script>  
-    <script src="javaScript/vistas/misTurnos.js"></script>
     <script src="javaScript/utilidades.js"></script>
     <script src="javaScript/configuraciones.js"></script>
     <script src="javaScript/routers.js"></script>
-
+    
     <script src="JavaScript/vistas/serviciosModal.js"></script>
     <script src="javaScript/clientesModal.js"></script>
     <script src="javaScript/vistas/navbar.js"></script>
