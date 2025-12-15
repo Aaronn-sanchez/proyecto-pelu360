@@ -273,6 +273,81 @@ class TurnosClass {
             ];
         }
     }
+    
+// =====================================================
+// PUT - Aceptar turno (solo el empleado asignado)
+// =====================================================
+public function aceptar($data) {
+    try {
+        // Validar datos requeridos
+        if (!isset($data['id_turno']) || !isset($data['id_empleado']) || !isset($data['rol'])) {
+            return [
+                'success' => false, 
+                'msg' => 'Faltan datos requeridos (id_turno, id_empleado, rol)'
+            ];
+        }
+
+        $id_turno = $data['id_turno'];
+        $id_empleado = $data['id_empleado'];
+        $rol = $data['rol'];
+
+        // Validar que sea un empleado
+        if ($rol !== 'empleado') {
+            return [
+                'success' => false, 
+                'msg' => 'Solo los empleados pueden aceptar turnos'
+            ];
+        }
+
+        // Obtener el turno
+        $turno = $this->obtenerPorId($id_turno);
+        if (!$turno) {
+            return [
+                'success' => false, 
+                'msg' => 'Turno no encontrado'
+            ];
+        }
+
+        // Validar que el turno esté pendiente
+        if ($turno['estado'] !== 'Pendiente') {
+            return [
+                'success' => false, 
+                'msg' => 'Este turno ya fue confirmado o cancelado'
+            ];
+        }
+
+        // Validar que sea el empleado asignado
+        if ($turno['id_empleado'] != $id_empleado) {
+            return [
+                'success' => false, 
+                'msg' => 'Este turno no está asignado a ti'
+            ];
+        }
+
+        // Actualizar estado a "Confirmado"
+        $sql = "UPDATE turnos SET estado = 'Confirmado' WHERE id_turno = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $resultado = $stmt->execute([$id_turno]);
+
+        if ($resultado) {
+            return [
+                'success' => true,
+                'msg' => 'Turno confirmado exitosamente'
+            ];
+        } else {
+            return [
+                'success' => false,
+                'msg' => 'Error al confirmar el turno'
+            ];
+        }
+
+    } catch (PDOException $e) {
+        return [
+            'success' => false,
+            'msg' => 'Error al aceptar turno: ' . $e->getMessage()
+        ];
+    }
+}
 
     // =====================================================
     // DELETE - Eliminar turno

@@ -1,6 +1,5 @@
-
 // ============================================
-// 📄 9. vistas/inicio.js - VERSIÓN REFACTORIZADA
+// VISTA: INICIO - LIMPIO
 // ============================================
 
 const Inicio = {
@@ -28,9 +27,8 @@ const Inicio = {
                 this.renderVista();
             } else if (State.accionActual === "alertas") {
                 this.renderGestionAlertas();
-            } else if (State.accionActual === "estadisticas") {
-                this.renderEstadisticas();
             }
+            // ❌ ELIMINADO: else if estadisticas
         });
     },
     
@@ -70,7 +68,7 @@ const Inicio = {
             <h4 class="mb-3">📅 Turnos de Hoy</h4>
             <div class="row g-3" id="turnosDelDia"></div>
             
-            <h4 class="mt-4 mb-3">🔔 Alertas Importantes</h4>
+            <h4 class="mt-4 mb-3">📢 Alertas Importantes</h4>
             <div id="alertasContainer"></div>
         `;
         
@@ -129,7 +127,6 @@ const Inicio = {
             const div = document.createElement("div");
             div.className = "alert-custom";
             
-            // Si el aviso tiene estructura de BD (con titulo, contenido, fecha)
             if (aviso.titulo && aviso.contenido) {
                 const fecha = new Date(aviso.fecha);
                 const fechaFormateada = fecha.toLocaleDateString('es-AR', { 
@@ -149,7 +146,6 @@ const Inicio = {
                     </div>
                 `;
             } else {
-                // Para alertas antiguas que solo tienen texto
                 div.innerHTML = `
                     <i class="fas fa-info-circle alert-icon"></i>
                     <div class="alert-body">${aviso}</div>
@@ -161,9 +157,16 @@ const Inicio = {
     },
     
     renderGestionAlertas() {
+        // ✅ Solo administradores
+        if (State.usuarioActual.rol !== "administrador") {
+            Utilidades.mostrarNotificacion('🚫 No tienes permisos para gestionar alertas', 'error');
+            Router.navegarAccion('ver');
+            return;
+        }
+
         let html = `
             <div class="content-header">
-                <h2>🔔 Gestión de Alertas</h2>
+                <h2>📢 Gestión de Alertas</h2>
                 <p>Administra las notificaciones importantes del sistema</p>
             </div>
             
@@ -205,8 +208,6 @@ const Inicio = {
         `;
         
         document.getElementById("mainContent").innerHTML = html;
-        
-        // Establecer fecha actual por defecto
         document.getElementById("fechaAlerta").valueAsDate = new Date();
         
         this.renderListaAlertas();
@@ -226,7 +227,6 @@ const Inicio = {
             const div = document.createElement("div");
             div.className = "alert-custom";
             
-            // Si el aviso tiene estructura de BD
             if (aviso.titulo && aviso.contenido) {
                 const fecha = new Date(aviso.fecha);
                 const fechaFormateada = fecha.toLocaleDateString('es-AR', { 
@@ -249,7 +249,6 @@ const Inicio = {
                     </button>
                 `;
             } else {
-                // Para alertas antiguas
                 div.innerHTML = `
                     <i class="fas fa-bell alert-icon"></i>
                     <div class="alert-body">${aviso}</div>
@@ -261,61 +260,6 @@ const Inicio = {
             
             container.appendChild(div);
         });
-    },
-    
-    renderEstadisticas() {
-        const turnosConfirmados = State.turnos.filter(t => t.estado === "Confirmado").length;
-        const turnosPendientes = State.turnos.filter(t => t.estado === "Pendiente").length;
-        
-        let html = `
-            <div class="content-header">
-                <h2>📊 Estadísticas del Negocio</h2>
-                <p>Análisis y métricas de rendimiento</p>
-            </div>
-            
-            <div class="row g-4">
-                <div class="col-md-6">
-                    <div class="card-custom">
-                        <h5 class="text-gradient">Turnos por Estado</h5>
-                        <div class="mt-3">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Confirmados</span>
-                                <strong>${turnosConfirmados}</strong>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Pendientes</span>
-                                <strong>${turnosPendientes}</strong>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span>Cancelados</span>
-                                <strong>0</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card-custom">
-                        <h5 class="text-gradient">Empleados Activos</h5>
-                        <div class="mt-3">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Total de Empleados</span>
-                                <strong>${State.empleados.length}</strong>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Turnos Asignados</span>
-                                <strong>${State.turnos.length}</strong>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <span>Promedio por Empleado</span>
-                                <strong>${State.empleados.length > 0 ? Math.round(State.turnos.length / State.empleados.length) : 0}</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> 
-        `;
-        
-        document.getElementById("mainContent").innerHTML = html;
     },
     
     setupFormAlerta() {
@@ -330,7 +274,6 @@ const Inicio = {
         const LIMITE_TITULO = 100;
         const LIMITE_CONTENIDO = 500;
 
-        // Contador para título
         inputTitulo.addEventListener("input", () => {
             const longitud = inputTitulo.value.length;
             if (longitud > LIMITE_TITULO) {
@@ -340,7 +283,6 @@ const Inicio = {
             contadorTitulo.textContent = `${inputTitulo.value.length}/${LIMITE_TITULO}`;
         });
 
-        // Contador para contenido
         inputContenido.addEventListener("input", () => {
             const longitud = inputContenido.value.length;
             if (longitud > LIMITE_CONTENIDO) {
@@ -350,7 +292,6 @@ const Inicio = {
             contadorContenido.textContent = `${inputContenido.value.length}/${LIMITE_CONTENIDO}`;
         });
 
-        // Envío del formulario - ✅ REFACTORIZADO
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
             
@@ -386,7 +327,6 @@ const Inicio = {
         });
     },
     
-    // ✅ REFACTORIZADO
     async eliminarAlerta(id) {
         if (confirm("¿Estás seguro de eliminar esta alerta?")) {
             const resultado = await ApiServicios.eliminarAviso(id);

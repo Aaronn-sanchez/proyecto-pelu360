@@ -3,6 +3,7 @@
 // ============================================
 
 const Turnos = {
+
     render() {
         Utilidades.transicionContenido(() => {
             if (State.accionActual === "ver") {
@@ -18,7 +19,7 @@ const Turnos = {
     renderVer() {
         let html = `
             <div class="content-header">
-                <h2>📅 Gestión de Turnos</h2>
+                <h2>Gestión de Turnos</h2>
                 <p>Visualiza y administra todos los turnos programados</p>
             </div>
             
@@ -29,6 +30,7 @@ const Turnos = {
         this.renderLista();
     },
 
+    
     renderLista() {
         const container = document.getElementById("turnosContainer");
         container.innerHTML = "";
@@ -91,465 +93,409 @@ const Turnos = {
                         ` : ''}
                     </div>
                     <div class="card-footer-custom">
-                        <button class="btn btn-custom btn-edit btn-sm-custom" 
-                                onclick="Turnos.modificar(${t.id})">
-                            <i class="fas fa-edit"></i> Modificar
-                        </button>
-                        <button class="btn btn-custom btn-delete btn-sm-custom" 
-                                onclick="Turnos.cancelar(${t.id})">
-                            <i class="fas fa-times"></i> Cancelar
-                        </button>
-                    </div>
+    ${State.usuarioActual?.rol === "Administrador" ? `
+        <button class="btn btn-custom btn-edit btn-sm-custom" 
+                onclick="Turnos.modificar(${t.id})">
+            <i class="fas fa-edit"></i> Modificar
+        </button>
+        <button class="btn btn-custom btn-delete btn-sm-custom" 
+                onclick="Turnos.cancelar(${t.id})">
+            <i class="fas fa-times"></i> Cancelar
+        </button>
+    ` : State.usuarioActual?.rol === "Empleado" && t.empleado === State.usuarioActual.nombre ? `
+        <button class="btn btn-custom btn-primary-custom btn-sm-custom" 
+                onclick="Turnos.aceptar(${t.id})">
+            <i class="fas fa-check"></i> Aceptar
+        </button>
+    ` : `
+        <span class="text-muted">Sin permisos</span>
+    `}
+</div>
+
                 </div>
             `;
             container.appendChild(col);
         });
     },
 
-    // ============================================
-// REEMPLAZAR LA FUNCIÓN renderAgregar() EN turnos.js
-// ============================================
-
-async renderAgregar() {
-    let html = `
-        <style>
-            .form-section {
-                background: white;
-                border-radius: 16px;
-                padding: 2rem;
-                margin-bottom: 1.5rem;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                border: 1px solid #e2e8f0;
-                transition: all 0.3s ease;
-            }
-            
-            .form-section:hover {
-                box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-                transform: translateY(-2px);
-            }
-            
-            .section-header {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                margin-bottom: 1.5rem;
-                padding-bottom: 1rem;
-                border-bottom: 2px solid #f0f0f0;
-            }
-            
-            .section-icon {
-                width: 48px;
-                height: 48px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 24px;
-                color: white;
-                background: #535c66;
-                box-shadow: 0 4px 12px rgba(83, 92, 102, 0.3);
-            }
-            
-            .section-title {
-                font-size: 1.25rem;
-                font-weight: 600;
-                color: #2d3748;
-                margin: 0;
-            }
-            
-            .section-subtitle {
-                font-size: 0.875rem;
-                color: #718096;
-                margin: 0;
-            }
-            
-            .input-group-enhanced {
-                position: relative;
-            }
-            
-            .input-icon {
-                position: absolute;
-                left: 1rem;
-                top: 50%;
-                transform: translateY(-50%);
-                color: #a0aec0;
-                z-index: 10;
-            }
-            
-            .form-control-enhanced {
-                padding-left: 2.75rem !important;
-                border: 2px solid #e2e8f0;
-                border-radius: 10px;
-                height: 48px;
-                transition: all 0.2s ease;
-            }
-            
-            .form-control-enhanced:focus {
-                border-color: #535c66;
-                box-shadow: 0 0 0 3px rgba(83, 92, 102, 0.1);
-            }
-            
-            .btn-add-new {
-                height: 48px;
-                border-radius: 10px;
-                font-weight: 600;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                white-space: nowrap;
-                transition: all 0.2s ease;
-                background: #535c66;
-                color: white;
-                border: none;
-            }
-            
-            .btn-add-new:hover {
-                transform: scale(1.05);
-                background: #3d4450;
-                box-shadow: 0 4px 12px rgba(83, 92, 102, 0.4);
-            }
-            
-            .form-actions {
-                display: flex;
-                gap: 1rem;
-                justify-content: flex-end;
-                padding-top: 2rem;
-                border-top: 2px solid #f0f0f0;
-                margin-top: 2rem;
-            }
-            
-            .btn-submit {
-                background: #535c66;
-                border: none;
-                color: white;
-                padding: 0.875rem 2rem;
-                border-radius: 10px;
-                font-weight: 600;
-                font-size: 1rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 12px rgba(83, 92, 102, 0.4);
-            }
-            
-            .btn-submit:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(83, 92, 102, 0.5);
-                background: #3d4450;
-            }
-            
-            .btn-cancel {
-                background: #f7fafc;
-                border: 2px solid #e2e8f0;
-                color: #4a5568;
-                padding: 0.875rem 2rem;
-                border-radius: 10px;
-                font-weight: 600;
-                font-size: 1rem;
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                transition: all 0.3s ease;
-            }
-            
-            .btn-cancel:hover {
-                background: #edf2f7;
-                border-color: #cbd5e0;
-            }
-            
-            .readonly-field {
-                background: #f8f9fa;
-                cursor: not-allowed;
-            }
-            
-            textarea.form-control-enhanced {
-                height: auto;
-                padding-top: 1rem;
-                padding-bottom: 1rem;
-            }
-        </style>
-        
-        <div class="content-header d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 style="font-size: 2rem; font-weight: 700; color: #535c66;">
-                    📅 Nuevo Turno
-                </h2>
-                <p style="color: #718096; margin-bottom: 0;">Completa los datos para agendar un nuevo turno</p>
-            </div>
-            <button class="btn btn-cancel" onclick="Router.navegarAccion('ver')">
-                <i class="fas fa-arrow-left"></i> Volver
-            </button>
-        </div>
-        
-        <form id="formTurno">
-            <!-- SECCIÓN 1: INFORMACIÓN DEL CLIENTE -->
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="section-icon">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div>
-                        <h3 class="section-title">Información del Cliente</h3>
-                        <p class="section-subtitle">Selecciona o agrega un nuevo cliente</p>
-                    </div>
-                </div>
+    async renderAgregar() {
+        let html = `
+            <style>
+                .form-section {
+                    background: white;
+                    border-radius: 16px;
+                    padding: 2rem;
+                    margin-bottom: 1.5rem;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                    border: 1px solid #e9ecef;
+                    transition: all 0.3s ease;
+                }
                 
-                <div class="row g-4">
-                    <div class="col-md-8">
-                        <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
-                            Cliente <span style="color: #e53e3e;">*</span>
-                        </label>
-                        <div class="d-flex gap-2">
-                            <div class="input-group-enhanced flex-grow-1">
-                                <i class="fas fa-user input-icon"></i>
-                                <select id="clienteSelect" class="form-control form-control-enhanced" required>
-                                    <option value="">Seleccionar cliente...</option>
-                                    ${State.clientes.map(c =>
-        `<option value="${c.id_cliente}" data-telefono="${c.Telefono || ''}">
-                                            ${c.Nombre} ${c.Apellido}
-                                        </option>`
-    ).join('')}
-                                </select>
-                            </div>
-                            <button type="button" 
-                                    class="btn btn-add-new"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalNuevoCliente">
-                                <i class="fas fa-user-plus"></i> Nuevo Cliente
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
-                            Teléfono
-                        </label>
-                        <div class="input-group-enhanced">
-                            <i class="fas fa-phone input-icon"></i>
-                            <input type="tel" class="form-control form-control-enhanced readonly-field" 
-                                   id="telefono" placeholder="Se completa automáticamente" readonly>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 2: DETALLES DEL SERVICIO -->
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="section-icon" style="background: #6c757d;">
-                        <i class="fas fa-cut"></i>
-                    </div>
-                    <div>
-                        <h3 class="section-title">Detalles del Servicio</h3>
-                        <p class="section-subtitle">Selecciona el servicio y el profesional</p>
-                    </div>
-                </div>
+                .form-section:hover {
+                    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+                    transform: translateY(-2px);
+                }
                 
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
-                            Servicio <span style="color: #e53e3e;">*</span>
-                        </label>
-                        <div class="d-flex gap-2">
-                            <div class="input-group-enhanced flex-grow-1">
-                                <i class="fas fa-cut input-icon"></i>
-                                <select class="form-control form-control-enhanced" id="servicioSelect" required>
-                                    <option value="">Seleccionar servicio...</option>
-                                    ${State.servicios.map(s =>
-        `<option value="${s.id_servicio}" data-duracion="${s.duracion_estimada}">
-                                            ${s.nombre_servicio} (${s.duracion_estimada})
-                                        </option>`
-    ).join('')}
-                                </select>
-                            </div>
-                            <button type="button" 
-                                    class="btn btn-add-new"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalNuevoServicio">
-                                <i class="fas fa-plus"></i> Nuevo
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
-                            Profesional <span style="color: #e53e3e;">*</span>
-                        </label>
-                        <div class="input-group-enhanced">
-                            <i class="fas fa-user-tie input-icon"></i>
-                            <select class="form-control form-control-enhanced" id="empleadoSelect" required>
-                                <option value="">Seleccionar profesional...</option>
-                                ${State.empleados.map(e =>
-        `<option value="${e.id_usuario}">${e.nombre} ${e.apellido}</option>`
-    ).join('')}
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-12">
-                        <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
-                            Duración Estimada
-                        </label>
-                        <div class="input-group-enhanced">
-                            <i class="fas fa-hourglass-half input-icon"></i>
-                            <input type="text" class="form-control form-control-enhanced readonly-field" 
-                                   id="duracion" placeholder="Se completa automáticamente" readonly>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 3: FECHA Y HORA -->
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="section-icon" style="background: #848484;">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <div>
-                        <h3 class="section-title">Fecha y Horario</h3>
-                        <p class="section-subtitle">Define cuándo se realizará el servicio</p>
-                    </div>
-                </div>
+                .section-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    margin-bottom: 1.5rem;
+                    padding-bottom: 1rem;
+                    border-bottom: 2px solid #f0f0f0;
+                }
                 
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
-                            Fecha <span style="color: #e53e3e;">*</span>
-                        </label>
-                        <div class="input-group-enhanced">
-                            <i class="fas fa-calendar input-icon"></i>
-                            <input type="date" class="form-control form-control-enhanced" 
-                                   id="dia" required>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
-                            Hora <span style="color: #e53e3e;">*</span>
-                        </label>
-                        <div class="input-group-enhanced">
-                            <i class="fas fa-clock input-icon"></i>
-                            <input type="time" class="form-control form-control-enhanced" 
-                                   id="hora" required>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 4: OBSERVACIONES -->
-            <div class="form-section">
-                <div class="section-header">
-                    <div class="section-icon" style="background: #25262b;">
-                        <i class="fas fa-comment-dots"></i>
-                    </div>
-                    <div>
-                        <h3 class="section-title">Observaciones</h3>
-                        <p class="section-subtitle">Agrega notas o preferencias del cliente (opcional)</p>
-                    </div>
-                </div>
+                .section-icon {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    color: white;
+                    background: linear-gradient(135deg, #0a0c14ff 0%, #764ba2 100%);
+                    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+                }
                 
-                <div class="input-group-enhanced">
-                    <i class="fas fa-comment input-icon" style="top: 1.25rem;"></i>
-                    <textarea class="form-control form-control-enhanced" id="sugerencias" 
-                              rows="4" placeholder="Ejemplo: Cliente prefiere puntas rectas, traer referencia del estilo deseado..."></textarea>
+                .section-title {
+                    font-size: 1.25rem;
+                    font-weight: 600;
+                    color: #2d3748;
+                    margin: 0;
+                }
+                
+                .section-subtitle {
+                    font-size: 0.875rem;
+                    color: #718096;
+                    margin: 0;
+                }
+                
+                .input-group-enhanced {
+                    position: relative;
+                }
+                
+                .input-icon {
+                    position: absolute;
+                    left: 1rem;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: #a0aec0;
+                    z-index: 10;
+                }
+                
+                .form-control-enhanced {
+                    padding-left: 2.75rem !important;
+                    border: 2px solid #e2e8f0;
+                    border-radius: 10px;
+                    height: 48px;
+                    transition: all 0.2s ease;
+                }
+                
+                .form-control-enhanced:focus {
+                    border-color: #32333aff;
+                    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                }
+                
+                .btn-add-new {
+                    height: 48px;
+                    border-radius: 10px;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    white-space: nowrap;
+                    transition: all 0.2s ease;
+                }
+                
+                .btn-add-new:hover {
+                    transform: scale(1.05);
+                }
+                
+                .form-actions {
+                    display: flex;
+                    gap: 1rem;
+                    justify-content: flex-end;
+                    padding-top: 2rem;
+                    border-top: 2px solid #f0f0f0;
+                    margin-top: 2rem;
+                }
+                
+                .btn-submit {
+                    background: linear-gradient(135deg, #1a1c22ff 0%, #764ba2 100%);
+                    border: none;
+                    color: white;
+                    padding: 0.875rem 2rem;
+                    border-radius: 10px;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+                }
+                
+                .btn-submit:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+                }
+                
+                .btn-cancel {
+                    background: #f7fafc;
+                    border: 2px solid #e2e8f0;
+                    color: #4a5568;
+                    padding: 0.875rem 2rem;
+                    border-radius: 10px;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    transition: all 0.3s ease;
+                }
+                
+                .btn-cancel:hover {
+                    background: #edf2f7;
+                    border-color: #cbd5e0;
+                }
+                
+                .readonly-field {
+                    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+                    cursor: not-allowed;
+                }
+                
+                textarea.form-control-enhanced {
+                    height: auto;
+                    padding-top: 1rem;
+                    padding-bottom: 1rem;
+                }
+            </style>
+            
+            <div class="content-header d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 style="font-size: 2rem; font-weight: 700; background: -webkit-background-clip: text;">
+                         Nuevo Turno
+                    </h2>
+                    <p style="color: #718096; margin-bottom: 0;">Completa los datos para agendar un nuevo turno</p>
                 </div>
-            </div>
-
-            <!-- BOTONES DE ACCIÓN -->
-            <div class="form-actions">
-                <button type="button" class="btn-cancel" onclick="Router.navegarAccion('ver')">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-                <button type="submit" class="btn-submit">
-                    <i class="fas fa-check"></i> Guardar Turno
+                <button class="btn btn-cancel" onclick="Router.navegarAccion('ver')">
+                    <i class="fas fa-arrow-left"></i> Volver
                 </button>
             </div>
-        </form>
-    `;
-
-    document.getElementById("mainContent").innerHTML = html;
-
-    // Crear modal de clientes
-    if (typeof ClientesModal !== 'undefined') {
-        ClientesModal.crearModal();
-        await ClientesModal.cargarEnSelector();
-    }
-
-    // Crear modal de servicios
-    if (typeof ServiciosModal !== 'undefined') {
-        ServiciosModal.crearModal();
-    }
-
-    // Autocompletar teléfono y duración
-    document.getElementById("clienteSelect").addEventListener("change", e => {
-        const tel = e.target.selectedOptions[0]?.dataset.telefono || "";
-        document.getElementById("telefono").value = tel;
-    });
-
-    document.getElementById("servicioSelect").addEventListener("change", e => {
-        const dur = e.target.selectedOptions[0]?.dataset.duracion || "";
-        document.getElementById("duracion").value = dur;
-    });
-
-    // Envío del formulario
-    this.setupForm();
-},
-
-    buscar() {
-        const busqueda = document.getElementById("busqueda").value.toLowerCase();
-
-        if (busqueda.trim() === "") {
-            Utilidades.mostrarNotificacion("⚠️ Ingresa un término de búsqueda");
-            return;
-        }
-
-        const resultados = State.turnos.filter(t => {
-            return (t.cliente && t.cliente.toLowerCase().includes(busqueda)) ||
-                (t.empleado && t.empleado.toLowerCase().includes(busqueda)) ||
-                (t.servicio && t.servicio.toLowerCase().includes(busqueda)) ||
-                (t.dia && t.dia.toLowerCase().includes(busqueda)) ||
-                (t.hora && t.hora.toLowerCase().includes(busqueda));
-        });
-
-        const container = document.getElementById("resultadosBusqueda");
-
-        if (resultados.length === 0) {
-            container.innerHTML = '<p class="text-secondary"><i class="fas fa-search"></i> No se encontraron resultados</p>';
-            return;
-        }
-
-        let html = `<h5 class="mb-3">Encontrados: ${resultados.length}</h5><div class="row g-3">`;
-        resultados.forEach(t => {
-            const badgeClass = t.estado === "Confirmado" ? "badge-confirmado" :
-                t.estado === "Pendiente" ? "badge-pendiente" : "badge-cancelado";
-
-            html += `
-                <div class="col-md-6">
-                    <div class="card-custom">
-                        <div class="card-header-custom">
-                            <div>
-                                <div class="card-title">${t.cliente}</div>
-                                <div class="card-subtitle">${t.servicio}</div>
-                            </div>
-                            <span class="badge-custom ${badgeClass}">${t.estado}</span>
+            
+            <form id="formTurno">
+                <!-- SECCIÓN 1: INFORMACIÓN DEL CLIENTE -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="fas fa-user"></i>
                         </div>
-                        <div class="card-body-custom">
-                            <div class="card-info-row">
-                                <span class="card-info-label">Empleado:</span>
-                                <span class="card-info-value">${t.empleado}</span>
+                        <div>
+                            <h3 class="section-title">Información del Cliente</h3>
+                            <p class="section-subtitle">Selecciona o agrega un nuevo cliente</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-8">
+                            <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
+                                Cliente <span style="color: #e53e3e;">*</span>
+                            </label>
+                            <div class="d-flex gap-2">
+                                <div class="input-group-enhanced flex-grow-1">
+                                    <i class="fas fa-user input-icon"></i>
+                                    <select id="clienteSelect" class="form-control form-control-enhanced" required>
+                                        <option value="">Seleccionar cliente...</option>
+                                        ${State.clientes.map(c =>
+            `<option value="${c.id_cliente}" data-telefono="${c.telefono || ''}">
+                                                ${c.nombre} ${c.apellido}
+                                            </option>`
+        ).join('')}
+                                    </select>
+                                </div>
+                                <button type="button" 
+                                        class="btn btn-custom btn-primary-custom btn-add-new"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalNuevoCliente">
+                                    <i class="fas fa-user-plus"></i> Nuevo Cliente
+                                </button>
                             </div>
-                            <div class="card-info-row">
-                                <span class="card-info-label">Horario:</span>
-                                <span class="card-info-value">${t.hora} - ${t.dia}</span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
+                                Teléfono
+                            </label>
+                            <div class="input-group-enhanced">
+                                <i class="fas fa-phone input-icon"></i>
+                                <input type="tel" class="form-control form-control-enhanced readonly-field" 
+                                       id="telefono" placeholder="Se completa automáticamente" readonly>
                             </div>
                         </div>
                     </div>
                 </div>
-            `;
+
+                <!-- SECCIÓN 2: DETALLES DEL SERVICIO -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                        <div>
+                            <h3 class="section-title">Detalles del Servicio</h3>
+                            <p class="section-subtitle">Selecciona el servicio y el profesional</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
+                                Servicio <span style="color: #e53e3e;">*</span>
+                            </label>
+                            <div class="d-flex gap-2">
+                                <div class="input-group-enhanced flex-grow-1">
+                                    <i class="fas fa-cut input-icon"></i>
+                                    <select class="form-control form-control-enhanced" id="servicioSelect" required>
+                                        <option value="">Seleccionar servicio...</option>
+                                        ${State.servicios.map(s =>
+            `<option value="${s.id_servicio}" data-duracion="${s.duracion_estimada}">
+                                                ${s.nombre_servicio} (${s.duracion_estimada})
+                                            </option>`
+        ).join('')}
+                                    </select>
+                                </div>
+                                <button type="button" 
+                                        class="btn btn-custom btn-primary-custom btn-add-new"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalNuevoServicio">
+                                    <i class="fas fa-plus"></i> Nuevo
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
+                                Profesional <span style="color: #e53e3e;">*</span>
+                            </label>
+                            <div class="input-group-enhanced">
+                                <i class="fas fa-user-tie input-icon"></i>
+                                <select class="form-control form-control-enhanced" id="empleadoSelect" required>
+                                    <option value="">Seleccionar profesional...</option>
+                                    ${State.empleados.map(e =>
+            `<option value="${e.id_usuario}">${e.nombre} ${e.apellido}</option>`
+        ).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
+                                Duración Estimada
+                            </label>
+                            <div class="input-group-enhanced">
+                                <i class="fas fa-hourglass-half input-icon"></i>
+                                <input type="text" class="form-control form-control-enhanced readonly-field" 
+                                       id="duracion" placeholder="Se completa automáticamente" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 3: FECHA Y HORA -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div>
+                            <h3 class="section-title">Fecha y Horario</h3>
+                            <p class="section-subtitle">Define cuándo se realizará el servicio</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
+                                Fecha <span style="color: #e53e3e;">*</span>
+                            </label>
+                            <div class="input-group-enhanced">
+                                <i class="fas fa-calendar input-icon"></i>
+                                <input type="date" class="form-control form-control-enhanced" 
+                                       id="dia" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label" style="font-weight: 600; color: #4a5568; margin-bottom: 0.5rem;">
+                                Hora <span style="color: #e53e3e;">*</span>
+                            </label>
+                            <div class="input-group-enhanced">
+                                <i class="fas fa-clock input-icon"></i>
+                                <input type="time" class="form-control form-control-enhanced" 
+                                       id="hora" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN 4: OBSERVACIONES -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <div>
+                            <h3 class="section-title">Observaciones</h3>
+                            <p class="section-subtitle">Agrega notas o preferencias del cliente (opcional)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group-enhanced">
+                        <i class="fas fa-comment input-icon" style="top: 1.25rem;"></i>
+                        <textarea class="form-control form-control-enhanced" id="sugerencias" 
+                                  rows="4" placeholder="Ejemplo: Cliente prefiere puntas rectas, traer referencia del estilo deseado..."></textarea>
+                    </div>
+                </div>
+
+                <!-- BOTONES DE ACCIÓN -->
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="Router.navegarAccion('ver')">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-check"></i> Guardar Turno
+                    </button>
+                </div>
+            </form>
+        `;
+
+        document.getElementById("mainContent").innerHTML = html;
+
+        // Crear modal de clientes
+        if (typeof ClientesModal !== 'undefined') {
+            ClientesModal.crearModal();
+            await ClientesModal.cargarEnSelector();
+        }
+
+        // Crear modal de servicios
+        if (typeof ServiciosModal !== 'undefined') {
+            ServiciosModal.crearModal();
+        }
+
+        // Autocompletar teléfono y duración
+        document.getElementById("clienteSelect").addEventListener("change", e => {
+            const tel = e.target.selectedOptions[0]?.dataset.telefono || "";
+            document.getElementById("telefono").value = tel;
         });
-        html += '</div>';
-        container.innerHTML = html;
+
+        document.getElementById("servicioSelect").addEventListener("change", e => {
+            const dur = e.target.selectedOptions[0]?.dataset.duracion || "";
+            document.getElementById("duracion").value = dur;
+        });
+
+        // Envío del formulario
+        this.setupForm();
     },
 
     // ============================================
@@ -802,38 +748,46 @@ async renderAgregar() {
         });
     },
 
-    async cancelar(id_turno) {
-        if (confirm("¿Estás seguro de cancelar este turno?")) {
-            const resultado = await ApiServicios.eliminarTurno(id_turno);
-
-            if (resultado.success) {
-                // 🔄 Recargar turnos desde la BD usando la función de app.js
-                if (typeof window.recargarDatos === 'function') {
-                    await window.recargarDatos();
-                } else {
-                    await ApiServicios.obtenerTurnos();
-                }
-
-                // Renderizar de nuevo la lista
-                this.renderLista();
-                Utilidades.mostrarNotificacion("🗑️ Turno cancelado");
-            } else {
-                Utilidades.mostrarNotificacion(`❌ Error: ${resultado.msg}`, "error");
-            }
-        }
-    },
-
-    
-async modificar(id_turno) {
+    async aceptar(id_turno) {
     const turno = State.turnos.find(t => t.id == id_turno);
-    
+
     if (!turno) {
-        Utilidades.mostrarNotificacion("❌ Turno no encontrado");
+        Utilidades.mostrarNotificacion("❌ Turno no encontrado", "error");
         return;
     }
 
-    await this.renderModificar(turno);
+    if (turno.empleado !== State.usuarioActual.nombre) {
+        Utilidades.mostrarNotificacion("⚠️ Solo el empleado asignado puede aceptar este turno", "error");
+        return;
+    }
+
+    const confirmar = confirm(`¿Aceptar el turno de ${turno.cliente}?`);
+    if (!confirmar) return;
+
+    const turnoActualizado = { ...turno, estado: "Confirmado" };
+    const resultado = await ApiServicios.modificarTurno(turnoActualizado);
+
+    if (resultado.success) {
+        Utilidades.mostrarNotificacion("✅ Turno aceptado correctamente");
+        await ApiServicios.obtenerTurnos();
+        this.renderLista();
+    } else {
+        Utilidades.mostrarNotificacion(`❌ Error: ${resultado.msg}`, "error");
+    }
 },
+
+
+    async modificar(id_turno) {
+    const turno = State.turnos.find(t => t.id == id_turno);
+    
+    if (!turno) {
+        Utilidades.mostrarNotificacion("❌ Turno no encontrado", "error");
+        return;
+    }
+
+    // Renderizar formulario de edición
+    await this.renderModificar(turno);
+    },
 
    // 2️⃣ Agregar esta función simplificada para el formulario de modificación:
 

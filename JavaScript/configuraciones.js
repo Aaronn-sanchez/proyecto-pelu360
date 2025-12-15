@@ -12,10 +12,10 @@ const Config = {
         inicio: [
             {id: "ver", icon: "fa-home", text: "Vista General", roles: ["administrador", "empleado"]},
             {id: "alertas", icon: "fa-bell", text: "Gestionar Alertas", roles: ["administrador"]},
-            {id: "estadisticas", icon: "fa-chart-line", text: "Estadísticas", roles: ["administrador"]}
         ],
         turnos: [
             {id: "ver", icon: "fa-calendar-check", text: "Ver Turnos", roles: ["administrador", "empleado"]},
+            {id: "mis_turnos", icon: "fa-user-clock", text: "Mis Turnos", roles: ["empleado"]}, // ✅ NUEVO
             {id: "agregar", icon: "fa-plus-circle", text: "Agregar Turno", roles: ["administrador", "empleado"]}
         ],
         empleados: [

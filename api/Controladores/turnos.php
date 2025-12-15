@@ -66,12 +66,19 @@ class Turnos {
     }
 
     // =====================================================
-    // PUT
+    // PUT - Modificar o Aceptar turno
     // =====================================================
     public function put() {
         try {
             $data = json_decode(file_get_contents("php://input"), true);
-            $resultado = $this->turnosClass->modificar($data);
+            
+            // ✅ NUEVA LÓGICA: Si viene "accion: aceptar", usar el método específico
+            if (isset($data['accion']) && $data['accion'] === 'aceptar') {
+                $resultado = $this->turnosClass->aceptar($data);
+            } else {
+                $resultado = $this->turnosClass->modificar($data);
+            }
+            
             echo json_encode($resultado);
         } catch (Exception $e) {
             http_response_code(500);

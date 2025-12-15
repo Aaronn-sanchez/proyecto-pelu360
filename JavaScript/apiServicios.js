@@ -366,6 +366,45 @@ const ApiServicios = {
         }
     },
 
+    async aceptarTurno(id_turno, id_empleado, rol) {
+    try {
+        console.log('✅ Aceptando turno:', { id_turno, id_empleado, rol });
+        
+        const response = await fetch(`${this.baseURL}?recurso=turnos`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                accion: 'aceptar',  // 🔑 Clave para diferenciar de modificar
+                id_turno: id_turno,
+                id_empleado: id_empleado,
+                rol: rol
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            await this.obtenerTurnos();
+            console.log("✅ Turno aceptado correctamente");
+        }
+        
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Error al aceptar turno:', error);
+        return { 
+            success: false, 
+            msg: 'Error de conexión: ' + error.message
+        };
+    }
+},
+
     // ============================================
     // AVISOS
     // ============================================
