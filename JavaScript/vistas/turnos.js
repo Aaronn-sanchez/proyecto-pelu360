@@ -93,7 +93,7 @@ const Turnos = {
                         ` : ''}
                     </div>
                     <div class="card-footer-custom">
-    ${State.usuarioActual?.rol === "Administrador" ? `
+    ${State.usuarioActual?.rol === "administrador" ? `
         <button class="btn btn-custom btn-edit btn-sm-custom" 
                 onclick="Turnos.modificar(${t.id})">
             <i class="fas fa-edit"></i> Modificar
@@ -102,7 +102,7 @@ const Turnos = {
                 onclick="Turnos.cancelar(${t.id})">
             <i class="fas fa-times"></i> Cancelar
         </button>
-    ` : State.usuarioActual?.rol === "Empleado" && t.empleado === State.usuarioActual.nombre ? `
+    ` : State.usuarioActual?.rol === "empleado" && t.empleado === State.usuarioActual.nombre ? `
         <button class="btn btn-custom btn-primary-custom btn-sm-custom" 
                 onclick="Turnos.aceptar(${t.id})">
             <i class="fas fa-check"></i> Aceptar

@@ -13,12 +13,10 @@ async function inicializarApp() {
     // ------------------------------
     const usuario = JSON.parse(sessionStorage.getItem("usuario"));
     if (!usuario) {
-        // Si no hay usuario logueado, redirigir a login
         window.location.href = "login.html";
         return;
     }
 
-    // Guardar usuario en estado global
     State.usuarioActual = usuario;
     console.log("👤 Usuario actual:", State.usuarioActual);
 
@@ -148,7 +146,6 @@ async function cargarClientes() {
         console.log('👤 Cargando clientes...');
         const resultado = await ApiServicios.obtenerClientes();
         
-        // La API de clientes devuelve directamente el array
         if (Array.isArray(resultado)) {
             StateManager.setClientes(resultado);
             console.log(`✅ ${resultado.length} clientes cargados`);
@@ -165,17 +162,9 @@ async function cargarClientes() {
     } catch (error) {
         console.error('❌ Error al cargar clientes:', error);
         StateManager.setClientes([]);
-        // No lanzar error para no detener la app si los clientes fallan
     }
 }
 
-/**
- * Carga turnos desde la API
- */
-/**
- /**
- * Carga turnos desde la API
- */
 /**
  * Carga turnos desde la API
  */
@@ -198,17 +187,12 @@ async function cargarTurnos() {
 
         // 🔄 Mapeo usando los nombres EXACTOS de campos de tu API
         const turnosMapeados = turnos.map(t => {
-            // Tu API usa estos campos exactos:
-            // cliente_nombre, cliente_apellido, cliente_telefono
-            // empleado_nombre, empleado_apellido
-            // nombre_servicio, duracion_estimada
-            // horario, dia, estado, sugerencias
-            
             const nombreCliente = `${t.cliente_nombre || ''} ${t.cliente_apellido || ''}`.trim();
             const nombreEmpleado = `${t.empleado_nombre || ''} ${t.empleado_apellido || ''}`.trim();
             
             return {
                 id: t.id_turno,
+                id_empleado: t.id_empleado,
                 cliente: nombreCliente || 'Sin cliente',
                 telefono: t.cliente_telefono || '',
                 servicio: t.nombre_servicio || 'Sin servicio',
@@ -221,26 +205,13 @@ async function cargarTurnos() {
             };
         });
 
-        // ✅ GUARDAR EN STATE SOLO UNA VEZ, DESPUÉS DEL MAPEO
         StateManager.setTurnos(turnosMapeados);
-
         console.log(`✅ ${turnosMapeados.length} turnos cargados y mapeados correctamente`);
     } catch (error) {
         console.error('❌ Error al cargar turnos:', error);
         StateManager.setTurnos([]);
     }
 }
-
-// Exportar para usar en otros archivos
-if (typeof window !== 'undefined') {
-    window.cargarTurnos = cargarTurnos;
-}
-
-// Exportar para usar en otros archivos
-if (typeof window !== 'undefined') {
-    window.cargarTurnos = cargarTurnos;
-}
-
 
 /**
  * Carga avisos desde la base de datos
@@ -253,7 +224,6 @@ async function cargarAvisos() {
         }
     } catch (error) {
         console.error('❌ Error al cargar avisos:', error);
-        // No lanzar error para no detener la app si los avisos fallan
     }
 }
 
@@ -310,5 +280,10 @@ window.recargarDatos = async function() {
         console.error('❌ Error al recargar datos:', error);
     }
 };
+
+// ------------------------------
+// Exportar cargarTurnos para uso en otros archivos
+// ------------------------------
+window.cargarTurnos = cargarTurnos;
 
 console.log("✅ app.js cargado");
