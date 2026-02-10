@@ -324,10 +324,21 @@ public function aceptar($data) {
             ];
         }
 
-        // Actualizar estado a "Confirmado"
-        $sql = "UPDATE turnos SET estado = 'Confirmado' WHERE id_turno = ?";
+        // ✅ SOLUCIÓN: Actualizar estado manteniendo todos los campos obligatorios
+        $sql = "UPDATE turnos 
+                SET estado = 'Confirmado',
+                    id_cliente = ?,
+                    id_empleado = ?,
+                    id_servicio = ?
+                WHERE id_turno = ?";
+        
         $stmt = $this->pdo->prepare($sql);
-        $resultado = $stmt->execute([$id_turno]);
+        $resultado = $stmt->execute([
+            $turno['id_cliente'],   // ✅ Mantener id_cliente
+            $turno['id_empleado'],  // ✅ Mantener id_empleado
+            $turno['id_servicio'],  // ✅ Mantener id_servicio
+            $id_turno
+        ]);
 
         if ($resultado) {
             return [

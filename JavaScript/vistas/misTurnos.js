@@ -159,6 +159,7 @@ const MisTurnos = {
                 <td>
                     ${puedeAceptar ? `
                         <button 
+                            type="button"
                             class="btn btn-sm btn-success" 
                             onclick="MisTurnos.aceptarTurno(${turno.id})"
                             title="Confirmar turno">

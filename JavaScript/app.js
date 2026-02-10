@@ -186,24 +186,29 @@ async function cargarTurnos() {
         }
 
         // 🔄 Mapeo usando los nombres EXACTOS de campos de tu API
-        const turnosMapeados = turnos.map(t => {
-            const nombreCliente = `${t.cliente_nombre || ''} ${t.cliente_apellido || ''}`.trim();
-            const nombreEmpleado = `${t.empleado_nombre || ''} ${t.empleado_apellido || ''}`.trim();
-            
-            return {
-                id: t.id_turno,
-                id_empleado: t.id_empleado,
-                cliente: nombreCliente || 'Sin cliente',
-                telefono: t.cliente_telefono || '',
-                servicio: t.nombre_servicio || 'Sin servicio',
-                hora: t.horario || 'Sin hora',
-                empleado: nombreEmpleado || 'Sin empleado',
-                duracion: t.duracion_estimada || '30 min',
-                estado: t.estado || 'Pendiente',
-                dia: t.dia || '',
-                sugerencias: t.sugerencias || ''
-            };
-        });
+       // Mapeo usando los nombres EXACTOS de campos de tu API
+// 📄 Mapeo usando los nombres EXACTOS de campos de tu API
+const turnosMapeados = turnos.map(t => {
+    const nombreCliente = `${t.cliente_nombre || ''} ${t.cliente_apellido || ''}`.trim();
+    const nombreEmpleado = `${t.empleado_nombre || ''} ${t.empleado_apellido || ''}`.trim();
+    
+    return {
+        id: t.id_turno,            // mantiene compatibilidad con el resto del código
+        id_turno: t.id_turno,      // ID del turno
+        id_cliente: t.id_cliente,  // ✅ ID del cliente
+        id_empleado: t.id_empleado, // ✅ ID del empleado
+        id_servicio: t.id_servicio, // ✅ ID del servicio - AGREGAR ESTA LÍNEA
+        cliente: nombreCliente || 'Sin cliente',
+        telefono: t.cliente_telefono || '',
+        servicio: t.nombre_servicio || 'Sin servicio',
+        hora: t.horario || 'Sin hora',
+        empleado: nombreEmpleado || 'Sin empleado',
+        duracion: t.duracion_estimada || '30 min',
+        estado: t.estado || 'Pendiente',
+        dia: t.dia || '',
+        sugerencias: t.sugerencias || ''
+    };
+});
 
         StateManager.setTurnos(turnosMapeados);
         console.log(`✅ ${turnosMapeados.length} turnos cargados y mapeados correctamente`);

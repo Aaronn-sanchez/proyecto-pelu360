@@ -375,15 +375,28 @@ const ApiServicios = {
     try {
         console.log('✅ Aceptando turno:', { id_turno, id_empleado, rol });
         
+        // 🔍 Buscar el turno completo en State para obtener id_cliente
+        const turno = State.turnos.find(t => t.id_turno == id_turno);
+        
+        if (!turno) {
+            throw new Error('Turno no encontrado en el estado');
+        }
+        
+        if (!turno.id_cliente) {
+            throw new Error('El turno no tiene un cliente asignado');
+        }
+        
         const response = await fetch(`${this.baseURL}?recurso=turnos`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                accion: 'aceptar',  // Clave para diferenciar de modificar
+                accion: 'aceptar',
                 id_turno: id_turno,
                 id_empleado: id_empleado,
+                id_cliente: turno.id_cliente, 
+                id_servicio: turno.id_servicio,
                 rol: rol
             })
         });
