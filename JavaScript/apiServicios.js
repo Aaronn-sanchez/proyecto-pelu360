@@ -25,7 +25,7 @@ const ApiServicios = {
                 })
             });
             
-            console.log("📡 Status HTTP:", response.status);
+            console.log(" Status HTTP:", response.status);
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -212,10 +212,10 @@ const ApiServicios = {
     // ============================================
     async obtenerTurnos() {
     try {
-        console.log('📡 Obteniendo turnos desde:', `${this.baseURL}?recurso=turnos&completo=1:1`);
+        console.log(' Obteniendo turnos desde:', `${this.baseURL}?recurso=turnos&completo=1:1`);
         
         const response = await fetch(`${this.baseURL}?recurso=turnos&completo=1:1`);            
-        console.log('📊 Status de turnos:', response.status);
+        console.log(' Status de turnos:', response.status);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -233,22 +233,22 @@ const ApiServicios = {
         // La API devuelve directamente un array de turnos
         if (Array.isArray(data)) {
             console.log("✅ Turnos obtenidos desde API:", data.length);
-            // ❌ NO GUARDAR EN STATE AQUÍ - dejar que app.js lo haga después del mapeo
+       
             return { success: true, turnos: data };
         } 
-        // O puede devolver un objeto con success
+       
         else if (data.success && Array.isArray(data.turnos)) {
             console.log("✅ Turnos obtenidos desde API:", data.turnos.length);
-            // ❌ NO GUARDAR EN STATE AQUÍ - dejar que app.js lo haga después del mapeo
+           
             return { success: true, turnos: data.turnos };
         }
-        // Si hay un error del servidor
+       
         else if (data.error || !data.success) {
             console.error('❌ Error del servidor:', data.msg || data.error);
             return { success: false, msg: data.msg || data.error, turnos: [] };
         }
         
-        // Caso por defecto
+      
         console.warn('⚠️ Formato de respuesta inesperado:', data);
         return { success: false, turnos: [] };
         
@@ -264,7 +264,7 @@ const ApiServicios = {
 
     async crearTurno(turno) {
         try {
-            console.log('📤 Creando turno:', turno);
+            console.log(' Creando turno:', turno);
             
             const response = await fetch(`${this.baseURL}?recurso=turnos`, {
                 method: 'POST',
@@ -274,7 +274,7 @@ const ApiServicios = {
                 body: JSON.stringify(turno)
             });
             
-            console.log('📊 Status de creación:', response.status);
+            console.log('Status de creación:', response.status);
             
             if (!response.ok) {
                 const errorText = await response.text();
@@ -346,7 +346,7 @@ const ApiServicios = {
             body: JSON.stringify({ id_turno: parseInt(id_turno) })
         });
         
-        console.log('📡 Status de eliminación:', response.status);
+        console.log(' Status de eliminación:', response.status);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -375,7 +375,7 @@ const ApiServicios = {
     try {
         console.log('✅ Aceptando turno:', { id_turno, id_empleado, rol });
         
-        // 🔍 Buscar el turno completo en State para obtener id_cliente
+        //  Buscar el turno completo en State para obtener id_cliente
         const turno = State.turnos.find(t => t.id_turno == id_turno);
         
         if (!turno) {
