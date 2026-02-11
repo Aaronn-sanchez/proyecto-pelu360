@@ -88,7 +88,7 @@ const ApiServicios = {
             if (Array.isArray(data)) {
                 StateManager.setEmpleados(data);
                 console.log("✅ Empleados cargados:", data.length);
-                return { success: true, empleados: data };
+                return { success: true, empleados: data }; 
             } else if (data.success) {
                 StateManager.setEmpleados(data.empleados);
                 console.log("✅ Empleados cargados:", data.empleados.length);
@@ -208,7 +208,7 @@ const ApiServicios = {
     },
     
     // ============================================
-    // TURNOS
+    // login
     // ============================================
     async obtenerTurnos() {
     try {
