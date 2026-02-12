@@ -8,9 +8,6 @@
 async function inicializarApp() {
     console.log('🚀 Iniciando Estética360...');
 
-    // ------------------------------
-    // 1️⃣ Cargar usuario desde sessionStorage
-    // ------------------------------
     const usuario = JSON.parse(sessionStorage.getItem("usuario"));
     if (!usuario) {
         window.location.href = "login.html";
@@ -20,15 +17,9 @@ async function inicializarApp() {
     State.usuarioActual = usuario;
     console.log("👤 Usuario actual:", State.usuarioActual);
 
-    // ------------------------------
-    // 2️⃣ Renderizar navbar y sidebar
-    // ------------------------------
     Navbar.render();
     Sidebar.render();
 
-    // ------------------------------
-    // 3️⃣ Mostrar indicador de carga
-    // ------------------------------
     mostrarCargando();
 
     try {

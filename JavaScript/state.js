@@ -1,26 +1,23 @@
-// ============================================
+
 // ESTADO GLOBAL DE LA APLICACIÓN
-// ============================================
+
 
 const State = {
-    // Usuario actual (null hasta que haga login)
+
     usuarioActual: null,
-    
-    // Datos que vienen de la API
     empleados: [],
     servicios: [],
     turnos: [],
     clientes: [],
     
-    // Estado de navegación
     seccionActual: "inicio",
     accionActual: "ver"
 };
 
 // Funciones para modificar el estado
 const StateManager = {
-    // USUARIO
-    
+
+    // USUARIO    
     setUsuario(usuario) {
         State.usuarioActual = usuario;
     },
@@ -45,7 +42,7 @@ const StateManager = {
     
     eliminarEmpleado(id_usuario) {
         State.empleados = State.empleados.filter(e => e.id_usuario != id_usuario);
-        console.log(`🗑️ Empleado ${id_usuario} eliminado del estado`);
+        console.log(` Empleado ${id_usuario} eliminado del estado`);
     },
     
     // SERVICIOS
@@ -61,7 +58,7 @@ const StateManager = {
     
     eliminarServicio(id_servicio) {
         State.servicios = State.servicios.filter(s => s.id_servicio != id_servicio);
-        console.log(`🗑️ Servicio ${id_servicio} eliminado del estado`);
+        console.log(` Servicio ${id_servicio} eliminado del estado`);
     },
     
     // TURNOS
@@ -77,7 +74,7 @@ const StateManager = {
     
     eliminarTurno(id_turno) {
         State.turnos = State.turnos.filter(t => t.id_turno != id_turno);
-        console.log(`🗑️ Turno ${id_turno} eliminado del estado`);
+        console.log(` Turno ${id_turno} eliminado del estado`);
     },
     
     actualizarTurno(id_turno, turnoActualizado) {
@@ -101,19 +98,19 @@ const StateManager = {
     
     eliminarCliente(id_cliente) {
         State.clientes = State.clientes.filter(c => c.id_cliente != id_cliente);
-        console.log(`🗑️ Cliente ${id_cliente} eliminado del estado`);
+        console.log(` Cliente ${id_cliente} eliminado del estado`);
     },
     
     // NAVEGACIÓN
     
     cambiarSeccion(seccion) {
         State.seccionActual = seccion;
-        console.log("🔖 Sección actual:", seccion);
+        console.log(" Sección actual:", seccion);
     },
     
     cambiarAccion(accion) {
         State.accionActual = accion;
-        console.log("🎯 Acción actual:", accion);
+        console.log(" Acción actual:", accion);
     }
 };
 
