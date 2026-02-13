@@ -81,7 +81,7 @@ const StateManager = {
         const index = State.turnos.findIndex(t => t.id_turno == id_turno);
         if (index !== -1) {
             State.turnos[index] = turnoActualizado;
-            console.log(`✏️ Turno ${id_turno} actualizado en el estado`);
+            console.log(`Turno ${id_turno} actualizado en el estado`);
         }
     },
     
