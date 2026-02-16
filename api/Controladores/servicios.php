@@ -1,8 +1,10 @@
 <?php
 
+require_once __DIR__ . "/../Conexion.php";
 require_once "../Clases/serviciosClass.php";
 
-$servicios = new ServiciosClass();
+$conexion = new Conexion();
+$servicios = new ServiciosClass($conexion->getConexion());
 
 header("Content-Type: application/json");
 

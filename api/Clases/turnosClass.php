@@ -289,7 +289,14 @@ public function aceptar($data) {
 
         $id_turno = $data['id_turno'];
         $id_empleado = $data['id_empleado'];
-        $rol = $data['rol'];
+        
+        $stmtRol = $this->pdo->prepare("SELECT rol FROM usuarios WHERE id_usuario = ?");
+        $stmtRol->execute([$id_empleado]);
+        $usuario = $stmtRol->fetch(PDO::FETCH_ASSOC);
+
+        if (!$usuario || $usuario['rol'] !== 'empleado') {
+            return ['success' => false, 'msg' => 'Solo los empleados pueden aceptar turnos'];
+        }
 
         // Validar que sea un empleado
         if ($rol !== 'empleado') {

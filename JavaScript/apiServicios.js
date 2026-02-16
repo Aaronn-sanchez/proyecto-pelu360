@@ -4,10 +4,11 @@
 
 const ApiServicios = {
     baseURL: (window.location.hostname === "localhost")
-    ? "http://localhost/estetica360/api/index.php"
-    : "https://sanchez.ctpoba.com/estetica360/api/index.php",
+    // ? "http://localhost/estetica360/api/index.php"
+    ? "http://localhost/proyecto-pelu360/api/index.php"
+    : "https://sanchez.ctpoba.cofetch/estetica360/api/index.php",
 
-    // ============================================
+    // ============================================ 
     // LOGIN
     // ============================================
     async login(usuario, contraseña) {
