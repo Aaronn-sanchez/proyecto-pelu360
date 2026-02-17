@@ -32,16 +32,6 @@ class Clientes {
             return;
         }
 
-        // Validar teléfono duplicado
-        $query = $this->pdo->prepare("SELECT * FROM clientes WHERE Telefono = ?");
-        $query->execute([$data["Telefono"]]);
-        $existe = $query->fetch(PDO::FETCH_ASSOC);
-
-        if ($existe) {
-            echo json_encode(["error" => "Ya existe un cliente con este teléfono"]);
-            return;
-        }
-
         $resultado = $this->clientesModel->crearUsuario($data);
         echo json_encode($resultado);
     }

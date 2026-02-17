@@ -27,6 +27,14 @@ class ClientesClass {
     // Crear cliente
     public function crearUsuario($data) {
 
+     $query = $this->pdo->prepare("SELECT * FROM clientes WHERE Telefono = ?");
+    $query->execute([$data["Telefono"]]);
+    $existe = $query->fetch(PDO::FETCH_ASSOC);
+
+    if ($existe) {
+        return ["error" => "Ya existe un cliente con este teléfono"];
+    }
+
         $sql = "INSERT INTO clientes (Nombre, Apellido, Telefono)
                 VALUES (?, ?, ?)";
 
