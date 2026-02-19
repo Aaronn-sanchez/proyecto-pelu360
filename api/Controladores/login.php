@@ -11,7 +11,7 @@ class Login {
         $this->pdo = $conexion->getConexion();
     }
 
-    // LOGIN con POST
+    
     public function post() {
 
         $data = json_decode(file_get_contents("php://input"), true);
@@ -30,14 +30,14 @@ class Login {
             return;
         }
 
-        // ✅ Verificar contraseña con password_verify
+       
       if (!password_verify($data["pass"], $usuario["password"])) {
 
             echo json_encode(["error" => "Contraseña incorrecta"]);
             return;
         }
 
-       unset($usuario["password"]); // Nunca enviar contraseña
+       unset($usuario["password"]);
         echo json_encode([
             "success" => true,
             "usuario" => $usuario

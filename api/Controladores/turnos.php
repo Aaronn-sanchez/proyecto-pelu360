@@ -17,11 +17,6 @@ class Turnos {
     // GET
     // =====================================================
     public function get() {
-        header("Content-Type: application/json");
-        header("Access-Control-Allow-Origin: *");
-        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type");
-
         try {
             if (isset($_GET['completo']) && $_GET['completo'] == '1') {
                 $data = $this->turnosClass->obtenerTodosCompletos();
@@ -72,7 +67,6 @@ class Turnos {
         try {
             $data = json_decode(file_get_contents("php://input"), true);
             
-            // ✅ NUEVA LÓGICA: Si viene "accion: aceptar", usar el método específico
             if (isset($data['accion']) && $data['accion'] === 'aceptar') {
                 $resultado = $this->turnosClass->aceptar($data);
             } else {

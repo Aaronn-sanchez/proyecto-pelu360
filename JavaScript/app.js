@@ -2,9 +2,6 @@
 // app.JS - ARCHIVO PRINCIPAL
 // ============================================
 
-/**
- * Inicializa la aplicación
- */
 async function inicializarApp() {
     console.log('🚀 Iniciando Estética360...');
 
@@ -78,9 +75,7 @@ async function inicializarApp() {
     console.log('✅ Aplicación iniciada correctamente');
 }
 
-/**
- * Muestra un indicador de carga
- */
+// el cosito de carga
 function mostrarCargando() {
     const mainContent = document.getElementById("mainContent");
     if (mainContent) {
@@ -96,15 +91,13 @@ function mostrarCargando() {
     }
 }
 
-/**
- * Carga empleados desde la API
- */
+
 async function cargarEmpleados() {
     try {
         console.log('👥 Cargando empleados...');
         const resultado = await ApiServicios.obtenerEmpleados();
         
-        if (!resultado.success && resultado.empleados) {
+        if (resultado.success && resultado.empleados) {
             StateManager.setEmpleados(resultado.empleados);
         }
         
@@ -115,12 +108,10 @@ async function cargarEmpleados() {
     }
 }
 
-/**
- * Carga servicios desde la API
- */
+
 async function cargarServicios() {
     try {
-        console.log('✂️ Cargando servicios...');
+        console.log('Cargando servicios...');
         await ApiServicios.obtenerServicios();
         console.log(`✅ ${State.servicios.length} servicios cargados`);
     } catch (error) {
@@ -129,12 +120,9 @@ async function cargarServicios() {
     }
 }
 
-/**
- * Carga clientes desde la API
- */
 async function cargarClientes() {
     try {
-        console.log('👤 Cargando clientes...');
+        console.log('Cargando clientes...');
         const resultado = await ApiServicios.obtenerClientes();
         
         if (Array.isArray(resultado)) {
@@ -144,10 +132,10 @@ async function cargarClientes() {
             StateManager.setClientes(resultado.clientes);
             console.log(`✅ ${resultado.clientes.length} clientes cargados`);
         } else if (resultado.error) {
-            console.warn('⚠️ Error al cargar clientes:', resultado.error);
+            console.warn('Error al cargar clientes:', resultado.error);
             StateManager.setClientes([]);
         } else {
-            console.warn('⚠️ No se encontraron clientes');
+            console.warn('No se encontraron clientes');
             StateManager.setClientes([]);
         }
     } catch (error) {
@@ -156,9 +144,6 @@ async function cargarClientes() {
     }
 }
 
-/**
- * Carga turnos desde la API
- */
 async function cargarTurnos() {
     try {
         console.log('📅 Cargando turnos...');
@@ -210,7 +195,7 @@ const turnosMapeados = turnos.map(t => {
 
 async function cargarAvisos() {
     try {
-        console.log('📢 Cargando avisos...');
+        console.log('Cargando avisos...');
         if (typeof Inicio !== 'undefined' && typeof Inicio.cargarAvisosDesdeDB === 'function') {
             await Inicio.cargarAvisosDesdeDB();
         }

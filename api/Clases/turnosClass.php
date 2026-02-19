@@ -9,7 +9,7 @@ class TurnosClass {
     }
 
     // =====================================================
-    // GET - Obtener todos los turnos (simple)
+    // GET - Obtener todos los turnos 
     // =====================================================
     public function obtenerTodos() {
         $sql = "SELECT * FROM turnos ORDER BY dia DESC, horario ASC";
@@ -17,9 +17,6 @@ class TurnosClass {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // =====================================================
-    // GET - Obtener turnos con información completa (JOIN)
-    // =====================================================
     public function obtenerTodosCompletos() {
         $sql = "
             SELECT 
@@ -52,9 +49,7 @@ class TurnosClass {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // =====================================================
-    // GET - Obtener turno por ID
-    // =====================================================
+    
     public function obtenerPorId($id_turno) {
         $sql = "SELECT * FROM turnos WHERE id_turno = ?";
         $stmt = $this->pdo->prepare($sql);
@@ -62,9 +57,7 @@ class TurnosClass {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // =====================================================
-    // GET - Obtener turno completo por ID (con JOIN)
-    // =====================================================
+   
     public function obtenerCompletoPorId($id_turno) {
         $sql = "
             SELECT 
@@ -88,9 +81,7 @@ class TurnosClass {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // =====================================================
-    // GET - Obtener turnos por fecha
-    // =====================================================
+    
     public function obtenerPorFecha($fecha) {
         $sql = "
             SELECT 
@@ -113,9 +104,7 @@ class TurnosClass {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // =====================================================
-    // GET - Obtener turnos por empleado
-    // =====================================================
+   
     public function obtenerPorEmpleado($id_empleado) {
         $sql = "
             SELECT 
@@ -137,9 +126,7 @@ class TurnosClass {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // =====================================================
-    // GET - Obtener turnos por cliente
-    // =====================================================
+
     public function obtenerPorCliente($id_cliente) {
         $sql = "
             SELECT 
@@ -160,9 +147,7 @@ class TurnosClass {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // =====================================================
-    // GET - Obtener turnos por estado
-    // =====================================================
+  
     public function obtenerPorEstado($estado) {
         $sql = "
             SELECT 
@@ -230,7 +215,7 @@ class TurnosClass {
     // =====================================================
     // PUT - Modificar turno
     // =====================================================
-    public function modificar($data) {
+    public function modificar($data) {  
         try {
             // Validar disponibilidad (excluyendo el turno actual)
             if ($this->validarDisponibilidad($data, $data['id_turno'])) {
@@ -274,9 +259,6 @@ class TurnosClass {
         }
     }
     
-// =====================================================
-// PUT - Aceptar turno (solo el empleado asignado)
-// =====================================================
 public function aceptar($data) {
     try {
         // Validar datos requeridos
@@ -298,15 +280,7 @@ public function aceptar($data) {
             return ['success' => false, 'msg' => 'Solo los empleados pueden aceptar turnos'];
         }
 
-        // Validar que sea un empleado
-        if ($rol !== 'empleado') {
-            return [
-                'success' => false, 
-                'msg' => 'Solo los empleados pueden aceptar turnos'
-            ];
-        }
-
-        // Obtener el turno
+      
         $turno = $this->obtenerPorId($id_turno);
         if (!$turno) {
             return [
@@ -315,7 +289,7 @@ public function aceptar($data) {
             ];
         }
 
-        // Validar que el turno esté pendiente
+       
         if ($turno['estado'] !== 'Pendiente') {
             return [
                 'success' => false, 
@@ -323,7 +297,7 @@ public function aceptar($data) {
             ];
         }
 
-        // Validar que sea el empleado asignado
+       
         if ($turno['id_empleado'] != $id_empleado) {
             return [
                 'success' => false, 
@@ -331,7 +305,7 @@ public function aceptar($data) {
             ];
         }
 
-        // ✅ SOLUCIÓN: Actualizar estado manteniendo todos los campos obligatorios
+       
         $sql = "UPDATE turnos 
                 SET estado = 'Confirmado',
                     id_cliente = ?,
@@ -341,9 +315,9 @@ public function aceptar($data) {
         
         $stmt = $this->pdo->prepare($sql);
         $resultado = $stmt->execute([
-            $turno['id_cliente'],   // ✅ Mantener id_cliente
-            $turno['id_empleado'],  // ✅ Mantener id_empleado
-            $turno['id_servicio'],  // ✅ Mantener id_servicio
+            $turno['id_cliente'],   
+            $turno['id_empleado'],  
+            $turno['id_servicio'],  
             $id_turno
         ]);
 
@@ -388,9 +362,7 @@ public function aceptar($data) {
         }
     }
 
-    // =====================================================
-    // VALIDAR DISPONIBILIDAD DEL EMPLEADO
-    // =====================================================
+//    disponibilidad del empleado
     private function validarDisponibilidad($data, $id_turno_excluir = null) {
         $sql = "SELECT COUNT(*) as count FROM turnos 
                 WHERE id_empleado = ? 
@@ -413,9 +385,6 @@ public function aceptar($data) {
         return $result['count'] == 0;
     }
 
-    // =====================================================
-    // OBTENER ESTADÍSTICAS
-    // =====================================================
     public function obtenerEstadisticas() {
         $sql = "
             SELECT 
