@@ -27,16 +27,24 @@ class ClientesClass {
     // Crear cliente
     public function crearUsuario($data) {
 
-        $sql = "INSERT INTO clientes (Nombre, Apellido, Telefono)
+     $query = $this->pdo->prepare("SELECT * FROM clientes WHERE telefono = ?");
+    $query->execute([$data["telefono"]]);
+    $existe = $query->fetch(PDO::FETCH_ASSOC);
+
+    if ($existe) {
+        return ["error" => "Ya existe un cliente con este teléfono"];
+    }
+
+        $sql = "INSERT INTO clientes (nombre, apellido, telefono)
                 VALUES (?, ?, ?)";
 
         $query = $this->pdo->prepare($sql);
 
         try {
             $query->execute([
-                $data["Nombre"],
-                $data["Apellido"],
-                $data["Telefono"]
+                $data["nombre"],
+                $data["apellido"],
+                $data["telefono"]
             ]);
 
             return ["success" => "Cliente añadido correctamente"];
@@ -46,10 +54,10 @@ class ClientesClass {
     }
 
     // Actualizar telefono
-    public function actualizarClienteTelefono($id, $telefono) {
+    public function actualizarClientetelefono($id, $telefono) {
 
         $sql = "UPDATE clientes 
-                SET Telefono = ?
+                SET telefono = ?
                 WHERE id_cliente = ?";
 
         $query = $this->pdo->prepare($sql);

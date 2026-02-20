@@ -2,15 +2,9 @@
 // app.JS - ARCHIVO PRINCIPAL
 // ============================================
 
-/**
- * Inicializa la aplicación
- */
 async function inicializarApp() {
     console.log('🚀 Iniciando Estética360...');
 
-    // ------------------------------
-    // 1️⃣ Cargar usuario desde sessionStorage
-    // ------------------------------
     const usuario = JSON.parse(sessionStorage.getItem("usuario"));
     if (!usuario) {
         window.location.href = "login.html";
@@ -20,22 +14,16 @@ async function inicializarApp() {
     State.usuarioActual = usuario;
     console.log("👤 Usuario actual:", State.usuarioActual);
 
-    // ------------------------------
-    // 2️⃣ Renderizar navbar y sidebar
-    // ------------------------------
     Navbar.render();
     Sidebar.render();
 
-    // ------------------------------
-    // 3️⃣ Mostrar indicador de carga
-    // ------------------------------
     mostrarCargando();
 
     try {
         // ------------------------------
         // 4️⃣ Cargar todos los datos necesarios en paralelo
         // ------------------------------
-        console.log('📡 Cargando datos desde API...');
+        console.log(' Cargando datos desde API...');
         
         await Promise.all([
             cargarEmpleados(),
@@ -46,7 +34,7 @@ async function inicializarApp() {
         ]);
 
         console.log('✅ Todos los datos cargados correctamente');
-        console.log('📊 Estado actual:', {
+        console.log(' Estado actual:', {
             empleados: State.empleados.length,
             servicios: State.servicios.length,
             clientes: State.clientes.length,
@@ -87,9 +75,7 @@ async function inicializarApp() {
     console.log('✅ Aplicación iniciada correctamente');
 }
 
-/**
- * Muestra un indicador de carga
- */
+// el cosito de carga
 function mostrarCargando() {
     const mainContent = document.getElementById("mainContent");
     if (mainContent) {
@@ -105,15 +91,13 @@ function mostrarCargando() {
     }
 }
 
-/**
- * Carga empleados desde la API
- */
+
 async function cargarEmpleados() {
     try {
         console.log('👥 Cargando empleados...');
         const resultado = await ApiServicios.obtenerEmpleados();
         
-        if (!resultado.success && resultado.empleados) {
+        if (resultado.success && resultado.empleados) {
             StateManager.setEmpleados(resultado.empleados);
         }
         
@@ -124,12 +108,10 @@ async function cargarEmpleados() {
     }
 }
 
-/**
- * Carga servicios desde la API
- */
+
 async function cargarServicios() {
     try {
-        console.log('✂️ Cargando servicios...');
+        console.log('Cargando servicios...');
         await ApiServicios.obtenerServicios();
         console.log(`✅ ${State.servicios.length} servicios cargados`);
     } catch (error) {
@@ -138,12 +120,9 @@ async function cargarServicios() {
     }
 }
 
-/**
- * Carga clientes desde la API
- */
 async function cargarClientes() {
     try {
-        console.log('👤 Cargando clientes...');
+        console.log('Cargando clientes...');
         const resultado = await ApiServicios.obtenerClientes();
         
         if (Array.isArray(resultado)) {
@@ -153,10 +132,10 @@ async function cargarClientes() {
             StateManager.setClientes(resultado.clientes);
             console.log(`✅ ${resultado.clientes.length} clientes cargados`);
         } else if (resultado.error) {
-            console.warn('⚠️ Error al cargar clientes:', resultado.error);
+            console.warn('Error al cargar clientes:', resultado.error);
             StateManager.setClientes([]);
         } else {
-            console.warn('⚠️ No se encontraron clientes');
+            console.warn('No se encontraron clientes');
             StateManager.setClientes([]);
         }
     } catch (error) {
@@ -165,9 +144,6 @@ async function cargarClientes() {
     }
 }
 
-/**
- * Carga turnos desde la API
- */
 async function cargarTurnos() {
     try {
         console.log('📅 Cargando turnos...');
@@ -185,19 +161,17 @@ async function cargarTurnos() {
             return;
         }
 
-        // 🔄 Mapeo usando los nombres EXACTOS de campos de tu API
-       // Mapeo usando los nombres EXACTOS de campos de tu API
-// 📄 Mapeo usando los nombres EXACTOS de campos de tu API
+        
 const turnosMapeados = turnos.map(t => {
     const nombreCliente = `${t.cliente_nombre || ''} ${t.cliente_apellido || ''}`.trim();
     const nombreEmpleado = `${t.empleado_nombre || ''} ${t.empleado_apellido || ''}`.trim();
     
     return {
-        id: t.id_turno,            // mantiene compatibilidad con el resto del código
-        id_turno: t.id_turno,      // ID del turno
-        id_cliente: t.id_cliente,  // ✅ ID del cliente
-        id_empleado: t.id_empleado, // ✅ ID del empleado
-        id_servicio: t.id_servicio, // ✅ ID del servicio - AGREGAR ESTA LÍNEA
+        id: t.id_turno,            
+        id_turno: t.id_turno,      
+        id_cliente: t.id_cliente,  
+        id_empleado: t.id_empleado, 
+        id_servicio: t.id_servicio, 
         cliente: nombreCliente || 'Sin cliente',
         telefono: t.cliente_telefono || '',
         servicio: t.nombre_servicio || 'Sin servicio',
@@ -218,12 +192,10 @@ const turnosMapeados = turnos.map(t => {
     }
 }
 
-/**
- * Carga avisos desde la base de datos
- */
+
 async function cargarAvisos() {
     try {
-        console.log('📢 Cargando avisos...');
+        console.log('Cargando avisos...');
         if (typeof Inicio !== 'undefined' && typeof Inicio.cargarAvisosDesdeDB === 'function') {
             await Inicio.cargarAvisosDesdeDB();
         }
@@ -232,35 +204,33 @@ async function cargarAvisos() {
     }
 }
 
-// ------------------------------
-// Escuchar evento DOMContentLoaded
-// ------------------------------
+
 window.addEventListener('DOMContentLoaded', () => {
     inicializarApp();
 });
 
-// ------------------------------
+
 // Funciones globales auxiliares
-// ------------------------------
+
 window.toggleSidebarMobile = Utilidades.toggleSidebarMobile;
 
-// ------------------------------
+
 // Función global para cambiar sección (usada por navbar/sidebar)
-// ------------------------------
+
 window.cambiarSeccion = function(seccion) {
     Router.navegarSeccion(seccion);
 };
 
-// ------------------------------
+
 // Función global para cambiar acción (usada por sidebar)
-// ------------------------------
+
 window.cambiarAccion = function(accion) {
     Router.navegarAccion(accion);
 };
 
-// ------------------------------
+
 // Función global para cerrar sesión
-// ------------------------------
+
 window.cerrarSesion = function() {
     if (confirm("¿Estás seguro de cerrar sesión?")) {
         StateManager.cerrarSesion();
@@ -268,11 +238,10 @@ window.cerrarSesion = function() {
     }
 };
 
-// ------------------------------
-// Función global para recargar datos (útil después de crear/editar)
-// ------------------------------
+// Función global para recargar datos 
+
 window.recargarDatos = async function() {
-    console.log('🔄 Recargando datos...');
+    console.log(' Recargando datos...');
     try {
         await Promise.all([
             cargarEmpleados(),
@@ -286,9 +255,9 @@ window.recargarDatos = async function() {
     }
 };
 
-// ------------------------------
+
 // Exportar cargarTurnos para uso en otros archivos
-// ------------------------------
+
 window.cargarTurnos = cargarTurnos;
 
 console.log("✅ app.js cargado");

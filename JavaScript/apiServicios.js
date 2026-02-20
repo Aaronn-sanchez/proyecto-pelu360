@@ -4,10 +4,11 @@
 
 const ApiServicios = {
     baseURL: (window.location.hostname === "localhost")
-    ? "http://localhost/estetica360/api/index.php"
+    // ? "http://localhost/estetica360/api/index.php"
+    ? "http://localhost/proyecto-pelu360/api/index.php"
     : "https://sanchez.ctpoba.com/estetica360/api/index.php",
 
-    // ============================================
+    // ============================================ 
     // LOGIN
     // ============================================
     async login(usuario, contraseña) {
@@ -25,7 +26,7 @@ const ApiServicios = {
                 })
             });
             
-            console.log("📡 Status HTTP:", response.status);
+            console.log(" Status HTTP:", response.status);
             
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -210,10 +211,65 @@ const ApiServicios = {
     // ============================================
     // TURNOS
     // ============================================
+<<<<<<< HEAD
     
+=======
+    async obtenerTurnos() {
+    try {
+        console.log(' Obteniendo turnos desde:', `${this.baseURL}?recurso=turnos&completo=1:1`);
+        
+        const response = await fetch(`${this.baseURL}?recurso=turnos&completo=1:1`);            
+        console.log(' Status de turnos:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const text = await response.text();
+        
+        if (!text || text.trim() === '') {
+            console.warn("⚠️ Respuesta vacía del servidor");
+            return { success: true, turnos: [] };
+        }
+        
+        const data = JSON.parse(text);
+        
+        // La API devuelve directamente un array de turnos
+        if (Array.isArray(data)) {
+            console.log("✅ Turnos obtenidos desde API:", data.length);
+       
+            return { success: true, turnos: data };
+        } 
+       
+        else if (data.success && Array.isArray(data.turnos)) {
+            console.log("✅ Turnos obtenidos desde API:", data.turnos.length);
+           
+            return { success: true, turnos: data.turnos };
+        }
+       
+        else if (data.error || !data.success) {
+            console.error('❌ Error del servidor:', data.msg || data.error);
+            return { success: false, msg: data.msg || data.error, turnos: [] };
+        }
+        
+      
+        console.warn('⚠️ Formato de respuesta inesperado:', data);
+        return { success: false, turnos: [] };
+        
+    } catch (error) {
+        console.error('❌ Error al obtener turnos:', error);
+        return { 
+            success: false, 
+            message: 'Error de conexión: ' + error.message,
+            turnos: []
+        };
+    }
+},
+
+>>>>>>> 5a180545f01ae54c7765a34159f8168e5484594f
     async crearTurno(turno) {
         try {
-            console.log('📤 Creando turno:', turno);
+            console.log(' Creando turno:', turno);
             
             const response = await fetch(`${this.baseURL}?recurso=turnos`, {
                 method: 'POST',
@@ -223,7 +279,7 @@ const ApiServicios = {
                 body: JSON.stringify(turno)
             });
             
-            console.log('📊 Status de creación:', response.status);
+            console.log('Status de creación:', response.status);
             
             if (!response.ok) {
                 const errorText = await response.text();
@@ -295,7 +351,7 @@ const ApiServicios = {
             body: JSON.stringify({ id_turno: parseInt(id_turno) })
         });
         
-        console.log('📡 Status de eliminación:', response.status);
+        console.log(' Status de eliminación:', response.status);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -324,7 +380,7 @@ const ApiServicios = {
     try {
         console.log('✅ Aceptando turno:', { id_turno, id_empleado, rol });
         
-        // 🔍 Buscar el turno completo en State para obtener id_cliente
+        //  Buscar el turno completo en State para obtener id_cliente
         const turno = State.turnos.find(t => t.id_turno == id_turno);
         
         if (!turno) {
@@ -373,90 +429,92 @@ const ApiServicios = {
 },
 
     // ============================================
-    // AVISOS
-    // ============================================
-    async obtenerAvisos() {
-        try {
-            const response = await fetch('api/Controladores/avisos.php');
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const avisos = await response.json();
-            
-            if (Array.isArray(avisos)) {
-                console.log("✅ Avisos cargados:", avisos.length);
-                return { success: true, avisos };
-            }
-            
-            return { success: false, avisos: [] };
-            
-        } catch (error) {
-            console.error('❌ Error al obtener avisos:', error);
-            return { 
-                success: false, 
-                message: 'Error de conexión',
-                avisos: []
-            };
+// AVISOS
+// ============================================
+async obtenerAvisos() {
+    try {
+        const response = await fetch(`${this.baseURL}?recurso=avisos`);  // ✅ CAMBIO
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    },
+        
+        const avisos = await response.json();
+        
+        if (Array.isArray(avisos)) {
+            console.log("✅ Avisos cargados:", avisos.length);
+            return { success: true, avisos };
+        }
+        
+        return { success: false, avisos: [] };
+        
+    } catch (error) {
+        console.error('❌ Error al obtener avisos:', error);
+        return { 
+            success: false, 
+            message: 'Error de conexión',
+            avisos: []
+        };
+    }
+},
 
-    async crearAviso(aviso) {
-        try {
-            const response = await fetch('api/Controladores/avisos.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(aviso)
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                console.log("✅ Aviso creado correctamente");
-            }
-            
-            return data;
-            
-        } catch (error) {
-            console.error('❌ Error al crear aviso:', error);
-            return { 
-                success: false, 
-                message: 'Error de conexión' 
-            };
+async crearAviso(aviso) {
+    try {
+        const response = await fetch(`${this.baseURL}?recurso=avisos`, {  // ✅ CAMBIO
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(aviso)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    },
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log("✅ Aviso creado correctamente");
+        }
+        
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Error al crear aviso:', error);
+        return { 
+            success: false, 
+            message: 'Error de conexión' 
+        };
+    }
+},
 
-    async eliminarAviso(id) {
-        try {
-            const response = await fetch(`api/Controladores/avisos.php?id=${id}`, {
-                method: 'DELETE'
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                console.log("✅ Aviso eliminado correctamente");
-            }
-            
-            return data;
-            
-        } catch (error) {
-            console.error('❌ Error al eliminar aviso:', error);
-            return { 
-                success: false, 
-                message: 'Error de conexión' 
-            };
+async eliminarAviso(id) {
+    try {
+        const response = await fetch(`${this.baseURL}?recurso=avisos`, {  // ✅ CAMBIO
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_aviso: id })  // ✅ Enviar en body
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    },
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log("✅ Aviso eliminado correctamente");
+        }
+        
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Error al eliminar aviso:', error);
+        return { 
+            success: false, 
+            message: 'Error de conexión' 
+        };
+    }
+},
 
     // ============================================
     // CLIENTES
@@ -499,12 +557,12 @@ const ApiServicios = {
         }
     },
 
-    async actualizarTelefono(id_cliente, Telefono) {
+    async actualizarTelefono(id_cliente, telefono) {
         try {
             const res = await fetch(`${this.baseURL}?recurso=clientes`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id_cliente, Telefono })
+                body: JSON.stringify({ id_cliente, telefono })
             });
 
             return await res.json();
@@ -527,107 +585,107 @@ const ApiServicios = {
         }
     },
 
-    // ============================================
-    // SERVICIOS
-    // ============================================
-    async obtenerServicios() {
-        try {
-            const response = await fetch('api/Controladores/servicios.php');
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            if (data.ok && Array.isArray(data.data)) {
-                console.log("✅ Servicios cargados:", data.data.length);
-                StateManager.setServicios(data.data);
-                return { success: true, servicios: data.data };
-            }
-            
-            return { success: false, servicios: [] };
-            
-        } catch (error) {
-            console.error('❌ Error al obtener servicios:', error);
-            return { 
-                success: false, 
-                message: 'Error de conexión',
-                servicios: []
-            };
+   // ============================================
+// SERVICIOS
+// ============================================
+async obtenerServicios() {
+    try {
+        const response = await fetch(`${this.baseURL}?recurso=servicios`);  // ✅ CAMBIO AQUÍ
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    },
+        
+        const data = await response.json();
+        
+        if (data.ok && Array.isArray(data.data)) {
+            console.log("✅ Servicios cargados:", data.data.length);
+            StateManager.setServicios(data.data);
+            return { success: true, servicios: data.data };
+        }
+        
+        return { success: false, servicios: [] };
+        
+    } catch (error) {
+        console.error('❌ Error al obtener servicios:', error);
+        return { 
+            success: false, 
+            message: 'Error de conexión',
+            servicios: []
+        };
+    }
+},
 
-    async crearServicio(servicio) {
-        try {
-            const response = await fetch('api/Controladores/servicios.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(servicio)
-            });
-            
-            const data = await response.json();
-            
-            if (data.ok) {
-                console.log("✅ Servicio creado correctamente");
-                await this.obtenerServicios();
-            }
-            
-            return data;
-            
-        } catch (error) {
-            console.error('❌ Error al crear servicio:', error);
-            return { 
-                ok: false, 
-                msg: 'Error de conexión' 
-            };
+async crearServicio(servicio) {
+    try {
+        const response = await fetch(`${this.baseURL}?recurso=servicios`, {  // ✅ CAMBIO AQUÍ
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(servicio)
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+            console.log("✅ Servicio creado correctamente");
+            await this.obtenerServicios();
         }
-    },
+        
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Error al crear servicio:', error);
+        return { 
+            ok: false, 
+            msg: 'Error de conexión' 
+        };
+    }
+},
 
-    async modificarServicio(servicio) {
-        try {
-            const response = await fetch('api/Controladores/servicios.php', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(servicio)
-            });
-            
-            const data = await response.json();
-            
-            if (data.ok) {
-                console.log("✅ Servicio modificado correctamente");
-                await this.obtenerServicios();
-            }
-            
-            return data;
-            
-        } catch (error) {
-            console.error('❌ Error al modificar servicio:', error);
-            return { ok: false, msg: 'Error de conexión' };
+async modificarServicio(servicio) {
+    try {
+        const response = await fetch(`${this.baseURL}?recurso=servicios`, {  // ✅ CAMBIO AQUÍ
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(servicio)
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+            console.log("✅ Servicio modificado correctamente");
+            await this.obtenerServicios();
         }
-    },
+        
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Error al modificar servicio:', error);
+        return { ok: false, msg: 'Error de conexión' };
+    }
+},
 
-    async eliminarServicio(id) {
-        try {
-            const response = await fetch('api/Controladores/servicios.php', {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_servicio: id })
-            });
-            
-            const data = await response.json();
-            
-            if (data.ok) {
-                console.log("✅ Servicio eliminado correctamente");
-                await this.obtenerServicios();
-            }
-            
-            return data;
-            
-        } catch (error) {
-            console.error('❌ Error al eliminar servicio:', error);
-            return { ok: false, msg: 'Error de conexión' };
+async eliminarServicio(id) {
+    try {
+        const response = await fetch(`${this.baseURL}?recurso=servicios`, {  // ✅ CAMBIO AQUÍ
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_servicio: id })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+            console.log("✅ Servicio eliminado correctamente");
+            await this.obtenerServicios();
         }
+        
+        return data;
+        
+    } catch (error) {
+        console.error('❌ Error al eliminar servicio:', error);
+        return { ok: false, msg: 'Error de conexión' };
+    }
     }
 };
 

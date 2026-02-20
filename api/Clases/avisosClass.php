@@ -58,6 +58,15 @@ class AvisosClass {
 
     // Actualizar aviso
     public function actualizarAviso($id, $data) {
+
+        $campos = ["titulo", "contenido", "fecha_publicacion"];
+    
+    foreach ($campos as $campo) {
+        if (!isset($data[$campo]) || empty($data[$campo])) {
+            return ["error" => "El campo '$campo' es obligatorio."];
+        }
+    }
+
         $sql = "UPDATE avisos 
                 SET titulo = ?, contenido = ?, fecha_publicacion = ?
                 WHERE id_aviso = ?";

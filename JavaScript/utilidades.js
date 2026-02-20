@@ -1,4 +1,4 @@
-// ============================================
+
 // UTILIDADES GENERALES
 // ============================================
 
@@ -114,7 +114,7 @@ const Utilidades = {
         }
     },
     
-    /**
+    /*
      * Cierra el sidebar en móvil
      */
     cerrarSidebarMobile() {

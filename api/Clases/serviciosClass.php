@@ -1,15 +1,13 @@
 <?php
 
-require_once __DIR__ . '/../Conexion.php';
-
 class ServiciosClass {
 
     private $pdo;
 
-    public function __construct() {
-        $conexion = new Conexion();
-        $this->pdo = $conexion->getConexion();
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
     }
+    
 
     // ======================================================
     // GET → obtener todos los servicios

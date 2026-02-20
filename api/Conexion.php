@@ -17,7 +17,7 @@ class Conexion {
                 $this->pass
             );
 
-            // Configurar errores para ver qué pasa si algo falla
+            
             $this->conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         } catch (PDOException $e) {

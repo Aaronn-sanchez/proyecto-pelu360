@@ -32,16 +32,6 @@ class Clientes {
             return;
         }
 
-        // Validar teléfono duplicado
-        $query = $this->pdo->prepare("SELECT * FROM clientes WHERE Telefono = ?");
-        $query->execute([$data["Telefono"]]);
-        $existe = $query->fetch(PDO::FETCH_ASSOC);
-
-        if ($existe) {
-            echo json_encode(["error" => "Ya existe un cliente con este teléfono"]);
-            return;
-        }
-
         $resultado = $this->clientesModel->crearUsuario($data);
         echo json_encode($resultado);
     }
@@ -52,16 +42,16 @@ class Clientes {
     public function put() {
         $data = json_decode(file_get_contents("php://input"), true);
 
-        if (!isset($data["id_cliente"]) || !isset($data["Telefono"])) {
+        if (!isset($data["id_cliente"]) || !isset($data["telefono"])) {
             echo json_encode(["error" => "Faltan datos obligatorios"]);
             return;
         }
 
         // Validar teléfono duplicado (que no sea el suyo)
         $query = $this->pdo->prepare(
-            "SELECT * FROM clientes WHERE Telefono = ? AND id_cliente != ?"
+            "SELECT * FROM clientes WHERE telefono = ? AND id_cliente != ?"
         );
-        $query->execute([$data["Telefono"], $data["id_cliente"]]);
+        $query->execute([$data["telefono"], $data["id_cliente"]]);
         $existe = $query->fetch(PDO::FETCH_ASSOC);
 
         if ($existe) {
@@ -70,7 +60,7 @@ class Clientes {
         }
 
         $resultado = $this->clientesModel
-                           ->actualizarClienteTelefono($data["id_cliente"], $data["Telefono"]);
+                           ->actualizarClientetelefono($data["id_cliente"], $data["telefono"]);
 
         echo json_encode($resultado);
     }
