@@ -1,10 +1,6 @@
-// Agregar esta sección en tu archivo de turnos o crear uno nuevo llamado misTurnos.js
 
 const MisTurnos = {
     
-    /**
-     * Renderiza la vista de turnos para empleados
-     */
     render() {
         const usuario = State.usuarioActual;
         
@@ -82,10 +78,7 @@ const MisTurnos = {
         
         document.getElementById("mainContent").innerHTML = content;
     },
-    
-    /**
-     * Renderiza la tabla de turnos
-     */
+
     renderTablaTurnos(turnos) {
         if (turnos.length === 0) {
             return `
@@ -118,10 +111,7 @@ const MisTurnos = {
             </div>
         `;
     },
-    
-    /**
-     * Renderiza una fila de turno
-     */
+  
     renderFilaTurno(turno, index) {
         const estadoClass = {
             'Pendiente': 'warning',
@@ -175,9 +165,7 @@ const MisTurnos = {
         `;
     },
     
-    /**
-     * Acepta un turno asignado
-     */
+
     async aceptarTurno(id_turno) {
         const usuario = State.usuarioActual;
         
@@ -195,10 +183,10 @@ const MisTurnos = {
             if (resultado.success) {
                 Utilidades.mostrarNotificacion('✅ Turno aceptado correctamente');
                 
-                // Recargar los datos
+              
                 await cargarTurnos();
                 
-                // Re-renderizar la vista
+               
                 this.render();
             } else {
                 alert('Error: ' + (resultado.msg || 'No se pudo aceptar el turno'));
@@ -210,5 +198,4 @@ const MisTurnos = {
     }
 };
 
-// Hacer disponible globalmente
 window.MisTurnos = MisTurnos;

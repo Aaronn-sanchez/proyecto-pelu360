@@ -27,12 +27,12 @@ const Navbar = {
         });
         document.getElementById("navMenu").innerHTML = navHTML;
 
-        // Icono rol
+        
         const iconoRol = usuario.rol === "administrador"
             ? '<i class="fas fa-crown" style="color: #ffd700;"></i>'
             : '<i class="fas fa-user-circle"></i>';
 
-        // Mostrar nombre completo + icono
+       
         document.getElementById("userInfo").innerHTML =
             `${iconoRol} ${usuario.nombre} ${usuario.apellido}`;
     }

@@ -1,11 +1,10 @@
-// ============================================
+
 // API SERVICIOS - Todas las llamadas al backend
-// ============================================
+
 
 const ApiServicios = {
     baseURL: (window.location.hostname === "localhost")
-    // ? "http://localhost/estetica360/api/index.php"
-    ? "http://localhost/proyecto-pelu360/api/index.php"
+    ? "http://localhost/estetica360/api/index.php"
     : "https://sanchez.ctpoba.com/estetica360/api/index.php",
 
     // ============================================ 
@@ -211,9 +210,7 @@ const ApiServicios = {
     // ============================================
     // TURNOS
     // ============================================
-<<<<<<< HEAD
-    
-=======
+
     async obtenerTurnos() {
     try {
         console.log(' Obteniendo turnos desde:', `${this.baseURL}?recurso=turnos&completo=1:1`);
@@ -266,7 +263,6 @@ const ApiServicios = {
     }
 },
 
->>>>>>> 5a180545f01ae54c7765a34159f8168e5484594f
     async crearTurno(turno) {
         try {
             console.log(' Creando turno:', turno);

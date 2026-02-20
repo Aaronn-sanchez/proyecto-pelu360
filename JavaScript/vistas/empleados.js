@@ -1,12 +1,9 @@
 // ============================================
-// VISTA: EMPLEADOS (versión optimizada)
+// VISTA: EMPLEADOS 
 // ============================================
 
 const Empleados = {
 
-    // ============================================
-    // VALIDACIÓN COMPARTIDA
-    // ============================================
     validarDatosEmpleado(datos) {
         const { nombre, apellido, usuario_login, password, esNuevo } = datos;
         
@@ -139,7 +136,7 @@ const Empleados = {
                 ? '<span class="badge-custom badge-confirmado"><i class="fas fa-crown"></i> Admin</span>'
                 : '<span class="badge-custom badge-pendiente"><i class="fas fa-user"></i> Empleado</span>';
 
-            // 🔒 Verificar si es administrador
+           
             const esAdmin = e.rol === "administrador";
             const esMiUsuario = State.usuarioActual.id_usuario === e.id_usuario;
 
@@ -184,10 +181,10 @@ const Empleados = {
         const empleado = State.empleados[index];
         if (!empleado) return;
 
-        // 🔒 PROTECCIÓN: No permitir editar administradores
+        
         if (empleado.rol === "administrador") {
             Utilidades.mostrarNotificacion(
-                '🔒 Los administradores están protegidos y no pueden ser modificados',
+                ' Los administradores están protegidos y no pueden ser modificados',
                 'error'
             );
             return;
@@ -217,7 +214,7 @@ const Empleados = {
         const rol = document.getElementById("editRol").value;
         const password = document.getElementById("editPassword").value.trim();
 
-        // ✅ Usar validación compartida
+        
         if (!this.validarDatosEmpleado({ nombre, apellido, usuario_login, esNuevo: false })) {
             return;
         }
@@ -241,7 +238,7 @@ const Empleados = {
 
     async eliminar(index) {
         if (!State.usuarioActual || State.usuarioActual.rol !== "administrador") {
-            Utilidades.mostrarNotificacion('🚫 No tienes permisos para eliminar empleados', 'error');
+            Utilidades.mostrarNotificacion(' No tienes permisos para eliminar empleados', 'error');
             return;
         }
 
@@ -251,19 +248,19 @@ const Empleados = {
             return;
         }
 
-        // 🔒 PROTECCIÓN 1: No permitir eliminar administradores
+ 
         if (empleado.rol === "administrador") {
             Utilidades.mostrarNotificacion(
-                '🔒 Los administradores están protegidos y no pueden ser eliminados',
+                ' Los administradores están protegidos y no pueden ser eliminados',
                 'error'
             );
             return;
         }
 
-        // 🔒 PROTECCIÓN 2: No permitir eliminar tu propio usuario (redundante pero extra seguridad)
+       
         if (State.usuarioActual.id_usuario === empleado.id_usuario) {
             Utilidades.mostrarNotificacion(
-                '🚫 No puedes eliminar tu propio usuario',
+                ' No puedes eliminar tu propio usuario',
                 'error'
             );
             return;
@@ -277,7 +274,7 @@ const Empleados = {
             const resultado = await ApiServicios.eliminarEmpleado(empleado.id_usuario);
 
             if (resultado?.mensaje || resultado?.success) {
-                Utilidades.mostrarNotificacion('🗑️ Empleado eliminado correctamente', 'success');
+                Utilidades.mostrarNotificacion(' Empleado eliminado correctamente', 'success');
                 await ApiServicios.obtenerEmpleados();
                 this.renderTabla();
             } else {
@@ -286,13 +283,13 @@ const Empleados = {
             }
         } catch (error) {
             console.error('Error al eliminar empleado:', error);
-            Utilidades.mostrarNotificacion('⚠️ Error de conexión con el servidor', 'error');
+            Utilidades.mostrarNotificacion(' Error de conexión con el servidor', 'error');
         }
     },
 
     renderAgregar() {
         if (!State.usuarioActual || State.usuarioActual.rol !== "administrador") {
-            Utilidades.mostrarNotificacion('🚫 No tienes permisos para agregar empleados', 'error');
+            Utilidades.mostrarNotificacion(' No tienes permisos para agregar empleados', 'error');
             Router.navegarAccion('ver');
             return;
         }
@@ -358,7 +355,7 @@ const Empleados = {
         const contraseña = document.getElementById("nuevoPassword").value.trim();
         const rol = document.getElementById("nuevoRol").value;
 
-        // ✅ Usar validación compartida
+
         if (!this.validarDatosEmpleado({ nombre, apellido, usuario_login, password: contraseña, esNuevo: true })) {
             return;
         }
@@ -378,7 +375,7 @@ const Empleados = {
             }
         } catch (error) {
             console.error("Error al agregar empleado:", error);
-            Utilidades.mostrarNotificacion('⚠️ Error de conexión con el servidor', 'error');
+            Utilidades.mostrarNotificacion(' Error de conexión con el servidor', 'error');
         }
     }
 };

@@ -402,7 +402,7 @@ const Turnos = {
 
         document.getElementById("mainContent").innerHTML = html;
 
-        // Crear modales
+       
         if (typeof ClientesModal !== 'undefined') {
             ClientesModal.crearModal();
             await ClientesModal.cargarEnSelector();
@@ -412,13 +412,11 @@ const Turnos = {
             ServiciosModal.crearModal();
         }
 
-        // Setup de eventos
+       
         this.setupFormularioEventos(esEdicion);
     },
 
-    // ============================================
-    // EVENTOS DEL FORMULARIO
-    // ============================================
+   
     setupFormularioEventos(esEdicion) {
         const form = document.getElementById("formTurno");
         const clienteSelect = document.getElementById("clienteSelect");
@@ -426,13 +424,12 @@ const Turnos = {
         const telefonoInput = document.getElementById("telefono");
         const duracionInput = document.getElementById("duracion");
 
-        // Auto-completar teléfono
         clienteSelect.addEventListener("change", (e) => {
             const telefono = e.target.selectedOptions[0]?.dataset.telefono || "";
             telefonoInput.value = telefono;
         });
 
-        // Auto-completar duración
+       
         servicioSelect.addEventListener("change", (e) => {
             const duracion = e.target.selectedOptions[0]?.dataset.duracion || "";
             if (duracion && duracion !== "null") {
@@ -440,7 +437,6 @@ const Turnos = {
             }
         });
 
-        // Submit
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
             
@@ -516,9 +512,7 @@ const Turnos = {
         }
     },
 
-    // ============================================
-    // ACCIONES SOBRE TURNOS
-    // ============================================
+
     irAModificar(id_turno) {
         State.turnoEditando = id_turno;
         Router.navegarAccion('modificar');
@@ -618,9 +612,6 @@ const Turnos = {
     }
 },
 
-    // ============================================
-    // GESTIÓN DE SERVICIOS
-    // ============================================
     renderServicios() {
         let html = `
             <div class="content-header">

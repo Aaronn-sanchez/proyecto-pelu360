@@ -1,12 +1,9 @@
-// ============================================
-// MODAL DE SERVICIOS - OPTIMIZADO
-// ============================================
+
+// MODAL DE SERVICIOS 
+
 
 const ServiciosModal = {
     
-    // ============================================
-    // CONSTANTES
-    // ============================================
     LIMITES: {
         NOMBRE: 50,
         HORAS_MAX: 8,
@@ -15,9 +12,7 @@ const ServiciosModal = {
         NOMBRE_MIN: 3
     },
 
-    // ============================================
-    // VALIDACIONES COMPARTIDAS
-    // ============================================
+
     validarRango(valor, min, max, nombreCampo) {
         if (isNaN(valor)) return min;
         if (valor < min) return min;
@@ -80,9 +75,7 @@ const ServiciosModal = {
         return partes.length > 0 ? partes.join(' ') : '0 min';
     },
 
-    // ============================================
-    // SETUP DE CONTADORES
-    // ============================================
+  
     setupContador(inputId, contadorId, limite) {
         const input = document.getElementById(inputId);
         const contador = document.getElementById(contadorId);
@@ -109,12 +102,10 @@ const ServiciosModal = {
         });
     },
 
-    // ============================================
-    // PREVENIR ENTRADAS INVÁLIDAS
-    // ============================================
+
     setupInputNumerico(input) {
         input.addEventListener('keydown', (e) => {
-            // Permitir: backspace, delete, tab, escape, enter
+
             if ([46, 8, 9, 27, 13].indexOf(e.keyCode) !== -1 ||
                 (e.keyCode === 65 && e.ctrlKey === true) ||
                 (e.keyCode === 67 && e.ctrlKey === true) ||
@@ -233,10 +224,10 @@ const ServiciosModal = {
         const vistaPrevia = document.getElementById('vistaPrevia');
         const textoPrevia = document.getElementById('textoPrevia');
         
-        // Setup contador de nombre
+        
         this.setupContador('modalNombreServicio', 'contadorNombre', this.LIMITES.NOMBRE);
         
-        // Sanitización del nombre
+     
         nombreInput.addEventListener('blur', () => {
             nombreInput.value = nombreInput.value.replace(/\s+/g, ' ').trim();
             
@@ -246,7 +237,7 @@ const ServiciosModal = {
             }
         });
         
-        // Actualizar vista previa
+       
         const actualizarPrevia = () => {
             const horas = parseInt(modalHoras.value) || 0;
             const minutos = parseInt(modalMinutos.value) || 0;
@@ -263,7 +254,7 @@ const ServiciosModal = {
         modalHoras.addEventListener('input', actualizarPrevia);
         modalMinutos.addEventListener('input', actualizarPrevia);
         
-        // Validar rangos con función compartida
+       
         modalHoras.addEventListener('blur', () => {
             const val = this.validarRango(
                 parseInt(modalHoras.value), 
@@ -286,17 +277,17 @@ const ServiciosModal = {
             actualizarPrevia();
         });
         
-        // Setup inputs numéricos
+       
         this.setupInputNumerico(modalHoras);
         this.setupInputNumerico(modalMinutos);
         
-        // Submit del formulario
+       
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             this.guardar();
         });
         
-        // Limpiar al cerrar
+
         const modal = document.getElementById('modalNuevoServicio');
         modal.addEventListener('hidden.bs.modal', () => {
             form.reset();
@@ -314,8 +305,7 @@ const ServiciosModal = {
         const nombreServicio = document.getElementById('modalNombreServicio').value.trim();
         const horas = parseInt(document.getElementById('modalHoras').value) || 0;
         const minutos = parseInt(document.getElementById('modalMinutos').value) || 0;
-        
-        // Validaciones usando funciones compartidas
+  
         if (!this.validarNombreServicio(nombreServicio)) {
             document.getElementById('modalNombreServicio').focus();
             return;
@@ -326,7 +316,6 @@ const ServiciosModal = {
             return;
         }
         
-        // Crear servicio
         const duracionFormateada = this.formatearDuracion(horas, minutos);
         
         const nuevoServicio = {

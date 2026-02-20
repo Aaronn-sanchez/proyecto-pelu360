@@ -1,5 +1,5 @@
 // ============================================
-// VISTA: INICIO - LIMPIO
+// VISTA: INICIO
 // ============================================
 
 const Inicio = {
@@ -17,7 +17,7 @@ const Inicio = {
             console.log("✅ Avisos cargados desde BD:", State.alertas.length);
         } else {
             console.error('❌ Error al cargar avisos');
-            Utilidades.mostrarNotificacion("⚠️ Error al cargar avisos");
+            Utilidades.mostrarNotificacion("Error al cargar avisos");
         }
     },
 
@@ -28,7 +28,7 @@ const Inicio = {
             } else if (State.accionActual === "alertas") {
                 this.renderGestionAlertas();
             }
-            // ❌ ELIMINADO: else if estadisticas
+            
         });
     },
     
@@ -157,7 +157,7 @@ const Inicio = {
     },
     
     renderGestionAlertas() {
-        // ✅ Solo administradores
+        
         if (State.usuarioActual.rol !== "administrador") {
             Utilidades.mostrarNotificacion('🚫 No tienes permisos para gestionar alertas', 'error');
             Router.navegarAccion('ver');
