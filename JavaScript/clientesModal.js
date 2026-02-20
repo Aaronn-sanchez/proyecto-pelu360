@@ -1,15 +1,15 @@
-// ============================================
-// MÓDULO: CLIENTES (Integrado en Turnos)
-// ============================================
+
+// CLIENTES 
+
 
 const ClientesModal = {
     
-    // Cargar clientes en el selector del formulario de turnos
+    
     async cargarEnSelector() {
         const select = document.getElementById("clienteSelect");
         if (!select) return;
         
-        // Los clientes ya están en State.clientes, solo actualizar el select
+        
         select.innerHTML = '<option value="">Seleccionar cliente...</option>';
         
         State.clientes.forEach(cliente => {
@@ -20,7 +20,7 @@ const ClientesModal = {
             select.appendChild(option);
         });
         
-        // Evento para autocompletar teléfono al seleccionar
+       
         select.addEventListener("change", (e) => {
             const telefonoInput = document.getElementById("telefono");
             
@@ -34,9 +34,9 @@ const ClientesModal = {
         });
     },
     
-    // Crear el modal en el DOM
+    
     crearModal() {
-        // Verificar si ya existe
+        
         if (document.getElementById("modalNuevoCliente")) return;
         
         const modalHTML = `
@@ -98,7 +98,7 @@ const ClientesModal = {
         this.setupModalForm();
     },
     
-    // Configurar el formulario del modal
+    
     setupModalForm() {
         const form = document.getElementById("formNuevoCliente");
         if (!form) return;
@@ -110,11 +110,7 @@ const ClientesModal = {
             const apellido = document.getElementById("modalApellido").value.trim();
             const telefono = document.getElementById("modalTelefono").value.trim();
             
-            // ============================================
-            // VALIDACIONES FRONTEND
-            // ============================================
             
-            // Validar nombre
             if (!Utilidades.validarNombre(nombre)) {
                 Utilidades.mostrarNotificacion(
                     "❌ El nombre solo puede contener letras y espacios", 
@@ -124,7 +120,6 @@ const ClientesModal = {
                 return;
             }
             
-            // Validar apellido
             if (!Utilidades.validarNombre(apellido)) {
                 Utilidades.mostrarNotificacion(
                     "❌ El apellido solo puede contener letras y espacios", 
@@ -134,7 +129,7 @@ const ClientesModal = {
                 return;
             }
             
-            // Validar teléfono
+            
             if (!Utilidades.validarTelefono(telefono)) {
                 Utilidades.mostrarNotificacion(
                     "❌ Teléfono inválido (debe tener entre 6 y 15 dígitos)", 
@@ -144,7 +139,6 @@ const ClientesModal = {
                 return;
             }
             
-            // Verificar si ya existe un cliente con ese teléfono
             const existe = State.clientes.some(c => c.Telefono === telefono);
             
             if (existe) {
@@ -156,9 +150,7 @@ const ClientesModal = {
                 return;
             }
             
-            // ============================================
             // ENVIAR AL SERVIDOR
-            // ============================================
             
             const nuevoCliente = {
                 Nombre: nombre,
@@ -176,18 +168,14 @@ const ClientesModal = {
                     "success"
                 );
                 
-                // Cerrar modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById("modalNuevoCliente"));
                 modal.hide();
                 
-                // Limpiar formulario
                 form.reset();
                 
-                // Recargar clientes y selector
                 await window.cargarClientes();
                 await this.cargarEnSelector();
                 
-                // Autoseleccionar el nuevo cliente
                 const select = document.getElementById("clienteSelect");
                 const ultimoCliente = State.clientes[State.clientes.length - 1];
                 if (ultimoCliente) {

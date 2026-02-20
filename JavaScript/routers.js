@@ -30,14 +30,12 @@ const Router = {
         this.renderSeccionActual();
     },
     
-    /**
-     * Renderiza la sección actual según el estado
-     */
+
     renderSeccionActual() {
         const seccion = State.seccionActual;
         const accion = State.accionActual;
         
-        // ✅ Si estamos en turnos y la acción es "mis_turnos"
+       
         if (seccion === "turnos" && accion === "mis_turnos") {
             if (typeof MisTurnos !== 'undefined') {
                 MisTurnos.render();
@@ -48,7 +46,7 @@ const Router = {
             return;
         }
         
-        // Renderizado normal según sección
+        
         switch(seccion) {
             case "inicio":
                 Inicio.render();

@@ -3,12 +3,12 @@
 // ============================================
 
 const Config = {
-    // URL base de la API (centralizada)
+
     API_BASE_URL: (window.location.hostname === "localhost")
         ? "http://localhost/estetica360/api/index.php"
         : "https://sanchez.ctpoba.com/estetica360/api/index.php",
 
-    // Configuración de menús por sección
+
     menuConfig: {
         inicio: [
             {id: "ver", icon: "fa-home", text: "Vista General", roles: ["administrador", "empleado"]},

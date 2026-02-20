@@ -1,6 +1,4 @@
-
 // API SERVICIOS - Todas las llamadas al backend
-
 
 const ApiServicios = {
     baseURL: (window.location.hostname === "localhost")

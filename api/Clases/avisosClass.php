@@ -8,7 +8,7 @@ class AvisosClass {
         $this->pdo = $pdo;
     }
 
-    // Obtener todos los avisos
+
     public function obtenerAvisos() {
         $sql = "SELECT * FROM avisos ORDER BY fecha_publicacion DESC";
         $query = $this->pdo->prepare($sql);
@@ -16,16 +16,14 @@ class AvisosClass {
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Obtener un solo aviso
-    public function obtenerAviso($id) {
+        public function obtenerAviso($id) {
         $sql = "SELECT * FROM avisos WHERE id_aviso = ?";
         $query = $this->pdo->prepare($sql);
         $query->execute([$id]);
         return $query->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Crear aviso
-    public function crearAviso($data) {
+       public function crearAviso($data) {
         $campos = ["titulo", "contenido", "id_usuario"];
         
         foreach ($campos as $campo) {
@@ -34,7 +32,7 @@ class AvisosClass {
             }
         }
 
-        // Si no se proporciona fecha, usar la actual
+
         $fecha_publicacion = isset($data["fecha_publicacion"]) ? $data["fecha_publicacion"] : date('Y-m-d');
 
         $sql = "INSERT INTO avisos (titulo, contenido, fecha_publicacion, id_usuario)
@@ -56,7 +54,7 @@ class AvisosClass {
         }
     }
 
-    // Actualizar aviso
+    
     public function actualizarAviso($id, $data) {
 
         $campos = ["titulo", "contenido", "fecha_publicacion"];
@@ -101,7 +99,6 @@ class AvisosClass {
         }
     }
 
-    // Obtener avisos recientes (últimos 5)
     public function obtenerAvisosRecientes($limite = 5) {
         $sql = "SELECT * FROM avisos ORDER BY fecha_publicacion DESC LIMIT ?";
         $query = $this->pdo->prepare($sql);
