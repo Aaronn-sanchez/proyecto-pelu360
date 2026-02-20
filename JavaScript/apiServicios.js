@@ -106,7 +106,7 @@ const ApiServicios = {
                 empleados: []
             };
         }
-    },
+    },    
     
     async agregarEmpleado(empleado) {
         try {
@@ -117,7 +117,7 @@ const ApiServicios = {
                 },
                 body: JSON.stringify(empleado)
             });
-            
+              
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -210,58 +210,7 @@ const ApiServicios = {
     // ============================================
     // TURNOS
     // ============================================
-    async obtenerTurnos() {
-    try {
-        console.log('📡 Obteniendo turnos desde:', `${this.baseURL}?recurso=turnos&completo=1:1`);
-        
-        const response = await fetch(`${this.baseURL}?recurso=turnos&completo=1:1`);            
-        console.log('📊 Status de turnos:', response.status);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const text = await response.text();
-        
-        if (!text || text.trim() === '') {
-            console.warn("⚠️ Respuesta vacía del servidor");
-            return { success: true, turnos: [] };
-        }
-        
-        const data = JSON.parse(text);
-        
-        // La API devuelve directamente un array de turnos
-        if (Array.isArray(data)) {
-            console.log("✅ Turnos obtenidos desde API:", data.length);
-            // ❌ NO GUARDAR EN STATE AQUÍ - dejar que app.js lo haga después del mapeo
-            return { success: true, turnos: data };
-        } 
-        // O puede devolver un objeto con success
-        else if (data.success && Array.isArray(data.turnos)) {
-            console.log("✅ Turnos obtenidos desde API:", data.turnos.length);
-            // ❌ NO GUARDAR EN STATE AQUÍ - dejar que app.js lo haga después del mapeo
-            return { success: true, turnos: data.turnos };
-        }
-        // Si hay un error del servidor
-        else if (data.error || !data.success) {
-            console.error('❌ Error del servidor:', data.msg || data.error);
-            return { success: false, msg: data.msg || data.error, turnos: [] };
-        }
-        
-        // Caso por defecto
-        console.warn('⚠️ Formato de respuesta inesperado:', data);
-        return { success: false, turnos: [] };
-        
-    } catch (error) {
-        console.error('❌ Error al obtener turnos:', error);
-        return { 
-            success: false, 
-            message: 'Error de conexión: ' + error.message,
-            turnos: []
-        };
-    }
-},
-
+    
     async crearTurno(turno) {
         try {
             console.log('📤 Creando turno:', turno);
